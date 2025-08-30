@@ -732,7 +732,7 @@
         }
 
         // ========= PRINT & DOWNLOAD =========
-     function downloadBillAsImage(bill, filename) {
+    function downloadBillAsImage(bill, filename) {
             const renderArea = document.getElementById('bill-render-area');
             
             const itemsHtml = bill.items.map(item => {
@@ -740,21 +740,25 @@
                 const totalUnits = item.quantity * item.fillingQuantity;
                 const formattedTotalUnits = parseFloat(totalUnits.toFixed(2));
                 
+                // **बदलाव:** फ्लेक्सबॉक्स को HTML टेबल से बदल दिया गया है ताकि अलाइनमेंट हमेशा सही रहे
                 return `<div class="py-3 border-b border-dashed" style="border-color: rgba(0,0,0,0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="flex-grow: 1; padding-right: 8px; overflow: hidden;">
-                            <p class="font-bold" style="color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.name}">${item.name}</p>
-                            <p class="text-xs" style="color: var(--text-light);">${item.quantity} × (₹${item.price} / ${item.fillingQuantity} ${unitLabel})</p>
-                        </div>
-                        <div style="flex-shrink: 0;">
-                            <p class="font-bold text-right" style="color: var(--text);">₹${(item.price * item.quantity).toFixed(2)}</p>
-                        </div>
-                    </div>
-                    <p class="text-right text-xs font-semibold" style="color: var(--secondary); margin-top: 4px;">कुल: ${formattedTotalUnits} ${unitLabel}</p>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: left; vertical-align: top; padding-right: 8px;">
+                                    <p class="font-bold" style="color: var(--text); margin: 0;">${item.name}</p>
+                                    <p class="text-xs" style="color: var(--text-light); margin: 0; padding-top: 2px;">${item.quantity} × (₹${item.price} / ${item.fillingQuantity} ${unitLabel})</p>
+                                </td>
+                                <td style="text-align: right; vertical-align: top; white-space: nowrap;">
+                                    <p class="font-bold" style="color: var(--text); margin: 0;">₹${(item.price * item.quantity).toFixed(2)}</p>
+                                    <p class="text-xs font-semibold" style="color: var(--secondary); margin: 0; padding-top: 2px;">कुल: ${formattedTotalUnits} ${unitLabel}</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>`;
             }).join('');
 
-            // बदलाव 1: बाहरी div में rounded-2xl और overflow: hidden जोड़ा गया है
             renderArea.innerHTML = `
                 <div class="p-5 rounded-2xl" style="display: inline-block; background-color: var(--bg-end); overflow: hidden;">
                     <div class="p-6 rounded-xl shadow-lg" style="width: 400px; background-color: var(--card); font-family: 'Inter', sans-serif;">
@@ -779,11 +783,10 @@
                     </div>
                 </div>`;
             
-            // बदलाव 2: html2canvas में backgroundColor: null जोड़ा गया है
             html2canvas(renderArea.firstElementChild, { 
                 scale: 3, 
                 useCORS: true, 
-                backgroundColor: null // यह कोनों को ट्रांसपेरेंट बनाता है
+                backgroundColor: null
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = filename;
