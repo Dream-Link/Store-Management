@@ -53,7 +53,7 @@
         .barcode-badge { background-color: color-mix(in srgb, var(--text) 5%, transparent); color: var(--text-light); font-family: monospace; font-size: 0.75rem; padding: 2px 8px; border-radius: 9999px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
         /* Scanner Height Fix */
-        .scanner-viewport { height: 180px; width: 100%; border-radius: 1rem; overflow: hidden; background: #000; }
+        .scanner-viewport { height: 180px; width: 100%; border-radius: 1rem; overflow: hidden; background: #000; position: relative; }
         #reader, #storeReader, #shoppingReader, #dashboardReader { width: 100% !important; height: 100% !important; min-height: 0 !important; }
         #reader video, #storeReader video, #shoppingReader video, #dashboardReader video { border-radius: 0 !important; object-fit: cover !important; width: 100% !important; height: 100% !important; }
         
@@ -130,10 +130,12 @@
             <div class="mt-6 modern-card p-4">
                 <h3 class="text-lg font-bold mb-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 primary-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h-1m-2-11h1m-1 11h1M4 12H3m11 6v-1m-2 2v1m-7-2v1M7.5 7.5h9v9h-9v-9z" /></svg><span data-lang-key="dashboard_scanner_title">त्वरित स्कैन</span></h3>
                 <button onclick="startScanning('dashboard')" id="dashboardScanBtn" class="w-full primary-gradient text-white py-2.5 px-4 rounded-xl font-semibold modern-btn text-base flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM5 11a1 1 0 100 2h4a1 1 0 100-2H5zM4 15a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" /></svg><span data-lang-key="dashboard_scanner_btn">स्कैन शुरू करें</span></button>
-                <div id="dashboardScanner" class="hidden my-4 relative">
-                    <div class="scanner-viewport"><div id="dashboardReader"></div></div>
-                    <button onclick="toggleFlashlight('dashboard')" id="dashboardFlashBtn" class="flashlight-btn" title="फ्लैशलाइट">🔦</button>
-                    <div class="p-2 bg-black bg-opacity-30 absolute bottom-0 w-full rounded-b-xl">
+                <div id="dashboardScanner" class="hidden my-4">
+                    <div class="scanner-viewport">
+                        <div id="dashboardReader"></div>
+                        <button onclick="toggleFlashlight('dashboard')" id="dashboardFlashBtn" class="flashlight-btn" title="फ्लैशलाइट">🔦</button>
+                    </div>
+                    <div class="p-2 bg-gray-800 rounded-b-xl">
                         <div id="dashboardZoomControl" class="hidden items-center gap-2 text-white mb-2 px-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg><input type="range" id="dashboardZoomSlider" oninput="applyZoom()" class="zoom-slider"></div>
                         <button onclick="stopScanning('dashboard')" data-lang-key="scanner_stop" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg font-semibold modern-btn text-sm">स्कैन बंद करें</button>
                     </div>
@@ -170,10 +172,12 @@
                              </div>
                              <button onclick="startScanning('shopping')" id="shoppingScanBtn" class="primary-gradient text-white p-2.5 rounded-xl font-semibold modern-btn text-sm flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM5 11a1 1 0 100 2h4a1 1 0 100-2H5zM4 15a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" /></svg></button>
                          </div>
-                        <div id="shoppingScanner" class="hidden my-3 relative">
-                            <div class="scanner-viewport"><div id="shoppingReader"></div></div>
-                            <button onclick="toggleFlashlight('shopping')" id="shoppingFlashBtn" class="flashlight-btn" title="फ्लैशलाइट">🔦</button>
-                            <div class="p-2 bg-black bg-opacity-50 absolute bottom-0 w-full rounded-b-xl"><div id="shoppingZoomControl" class="hidden items-center gap-2 text-white mb-2 px-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg><input type="range" id="shoppingZoomSlider" oninput="applyZoom()" class="zoom-slider"></div><button onclick="stopScanning('shopping')" data-lang-key="scanner_stop" class="w-full bg-red-500 text-white py-2.5 px-3 rounded-lg font-semibold modern-btn text-sm">स्कैन बंद करें</button></div>
+                        <div id="shoppingScanner" class="hidden my-3">
+                            <div class="scanner-viewport">
+                                <div id="shoppingReader"></div>
+                                <button onclick="toggleFlashlight('shopping')" id="shoppingFlashBtn" class="flashlight-btn" title="फ्लैशलाइट">🔦</button>
+                            </div>
+                            <div class="p-2 bg-gray-800 rounded-b-xl"><div id="shoppingZoomControl" class="hidden items-center gap-2 text-white mb-2 px-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg><input type="range" id="shoppingZoomSlider" oninput="applyZoom()" class="zoom-slider"></div><button onclick="stopScanning('shopping')" data-lang-key="scanner_stop" class="w-full bg-red-500 text-white py-2.5 px-3 rounded-lg font-semibold modern-btn text-sm">स्कैन बंद करें</button></div>
                         </div>
                         <div id="searchResults" class="hidden mt-3 space-y-2 max-h-60 overflow-y-auto"></div>
                     </div>
@@ -214,10 +218,12 @@
         <div class="modern-card p-4 w-full max-w-md slide-up flex flex-col">
             <h3 class="text-lg font-bold mb-3 text-main flex-shrink-0"><span data-lang-key="modal_add_product_emoji">✨</span> <span data-lang-key="modal_add_product_title">नया प्रोडक्ट जोड़ें</span></h3>
             <div class="overflow-y-auto pr-2" style="max-height: 75vh;">
-                <div id="storeScanner" class="hidden my-3 relative">
-                    <div class="scanner-viewport"><div id="storeReader"></div></div>
-                    <button onclick="toggleFlashlight('store')" id="storeFlashBtn" class="flashlight-btn" title="फ्लैशलाइट">🔦</button>
-                    <div class="p-2 bg-black bg-opacity-50 absolute bottom-0 w-full rounded-b-xl"><div id="storeZoomControl" class="hidden items-center gap-2 text-white mb-2 px-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg><input type="range" id="storeZoomSlider" oninput="applyZoom()" class="zoom-slider"></div><button onclick="stopScanning('store')" data-lang-key="scanner_stop" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg font-semibold modern-btn text-sm">स्कैन बंद करें</button></div>
+                <div id="storeScanner" class="hidden my-3">
+                    <div class="scanner-viewport">
+                        <div id="storeReader"></div>
+                        <button onclick="toggleFlashlight('store')" id="storeFlashBtn" class="flashlight-btn" title="फ्लैशलाइट">🔦</button>
+                    </div>
+                    <div class="p-2 bg-gray-800 rounded-b-xl"><div id="storeZoomControl" class="hidden items-center gap-2 text-white mb-2 px-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg><input type="range" id="storeZoomSlider" oninput="applyZoom()" class="zoom-slider"></div><button onclick="stopScanning('store')" data-lang-key="scanner_stop" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg font-semibold modern-btn text-sm">स्कैन बंद करें</button></div>
                 </div>
                 <div class="space-y-3">
                     <div><label for="productBarcode" data-lang-key="form_barcode" class="block text-sm font-medium mb-1">बारकोड</label><div class="flex items-center gap-2"><input type="text" id="productBarcode" data-lang-key="placeholder_product_id" placeholder="प्रोडक्ट ID" class="w-full p-2.5 modern-input text-sm" onchange="fetchProductDetails(this.value)"><button onclick="startScanning('store')" id="storeScanBtn" class="primary-gradient text-white p-2.5 rounded-xl font-semibold modern-btn text-sm flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM5 11a1 1 0 100 2h4a1 1 0 100-2H5zM4 15a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" /></svg></button></div></div>
@@ -278,7 +284,7 @@
         function toggleMenu() { const menu = document.getElementById('menuDropdown'); const isOpening = menu.classList.contains('hidden'); menu.classList.toggle('hidden'); if (isOpening) { history.pushState({ menu: 'open' }, '', location.href); } }
         function showToast(message, type = 'info') { const toast = document.createElement('div'); const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'; toast.className = `fixed top-20 right-4 ${bgColor} text-white px-4 py-2 rounded-xl shadow-lg z-50 fade-in`; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => { toast.remove(); }, 2000); }
         function showSection(section, pushToHistory = true) { if (currentSection === section && !pushToHistory) return; ['home', 'store', 'shopping', 'history'].forEach(s => { document.getElementById(s + 'Section').classList.add('hidden'); document.getElementById(s + 'TabMobile').classList.remove('active'); document.getElementById(s + 'TabDesktop').classList.remove('active'); }); document.getElementById(section + 'Section').classList.remove('hidden'); document.getElementById(section + 'Section').classList.add('fade-in'); document.getElementById(section + 'TabMobile').classList.add('active'); document.getElementById(section + 'TabDesktop').classList.add('active'); document.getElementById('floatingAddBtn').classList.toggle('hidden', section !== 'store'); currentSection = section; if (pushToHistory) { history.pushState({ section: section }, '', `#${section}`); } if (section === 'store') { searchAndSortProducts(); } else if (isScanning) { stopScanning(currentScanningSection); } }
-        function startScanning(section) { if (isScanning) return; currentScanningSection = section; const scannerDiv = document.getElementById(section + 'Scanner'); scannerDiv.classList.remove('hidden'); isScanning = true; history.pushState({ scanner: 'open' }, '', location.href); const readerElement = document.getElementById(section + 'Reader'); html5QrCode = new Html5Qrcode(readerElement.id); const config = { fps: 25, qrbox: (viewfinderWidth, viewfinderHeight) => ({ width: Math.min(viewfinderWidth, viewfinderHeight) * 0.9, height: Math.min(viewfinderWidth, viewfinderHeight) * 0.9 }), rememberLastUsedCamera: true, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA], disableFlip: false }; html5QrCode.start({ facingMode: 'environment' }, config, handleScanResult).then(() => { setupCameraControls(section); }).catch(err => { showToast('❌ कैमरा एक्सेस नहीं हो सका।', 'error'); if(history.state && history.state.scanner){ history.back(); } }); }
+        function startScanning(section) { if (isScanning) return; currentScanningSection = section; const scannerDiv = document.getElementById(section + 'Scanner'); scannerDiv.classList.remove('hidden'); isScanning = true; history.pushState({ scanner: 'open' }, '', location.href); const readerElement = document.getElementById(section + 'Reader'); html5QrCode = new Html5Qrcode(readerElement.id); const config = { fps: 15, qrbox: (viewfinderWidth, viewfinderHeight) => { const minEdge = Math.min(viewfinderWidth, viewfinderHeight); const qrSize = Math.floor(minEdge * 0.7); return { width: qrSize, height: qrSize * 0.7 }; }, rememberLastUsedCamera: true, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA], disableFlip: false }; html5QrCode.start({ facingMode: 'environment' }, config, handleScanResult).then(() => { setupCameraControls(section); }).catch(err => { showToast('❌ कैमरा एक्सेस नहीं हो सका।', 'error'); if(history.state && history.state.scanner){ history.back(); } }); }
         function stopScanning(section) { if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop().catch(err => {}); } if (section) { const scannerDiv = document.getElementById(section + 'Scanner'); if (scannerDiv) { scannerDiv.classList.add('hidden'); } const flashBtn = document.getElementById(section + 'FlashBtn'); if (flashBtn) { flashBtn.classList.remove('active'); flashBtn.innerHTML = '🔦'; } const zoomControl = document.getElementById(section + 'ZoomControl'); if (zoomControl) { zoomControl.classList.add('hidden'); zoomControl.classList.remove('flex'); } } isScanning = false; currentScanningSection = null; flashlightEnabled = false; currentCameraTrack = null; }
         function handleScanResult(decodedText, decodedResult) { const section = currentScanningSection; if (history.state && history.state.scanner){ history.back(); } else { stopScanning(section); } if (section === 'store') { document.getElementById('productBarcode').value = decodedText; fetchProductDetails(decodedText); showToast('📱 बारकोड स्कैन हो गया!', 'success'); } else if (section === 'shopping') { if (products[decodedText]) { addToBill(decodedText); } else { showToast(`❌ प्रोडक्ट '${decodedText}' स्टोर में नहीं है!`, 'error'); } } else if (section === 'dashboard') { displayDashboardScanResult(decodedText); showToast('📱 बारकोड स्कैन हो गया!', 'success'); } }
         function setupCameraControls(section) { const readerElement = document.getElementById(section + 'Reader'); const videoElement = readerElement.querySelector('video'); if (!videoElement || !videoElement.srcObject) return; currentCameraTrack = videoElement.srcObject.getVideoTracks()[0]; const capabilities = currentCameraTrack.getCapabilities(); const zoomControl = document.getElementById(section + 'ZoomControl'); const zoomSlider = document.getElementById(section + 'ZoomSlider'); if (capabilities.zoom) { zoomControl.classList.remove('hidden'); zoomControl.classList.add('flex'); zoomSlider.min = capabilities.zoom.min; zoomSlider.max = capabilities.zoom.max; zoomSlider.step = capabilities.zoom.step; zoomSlider.value = currentCameraTrack.getSettings().zoom || capabilities.zoom.min; } }
@@ -304,11 +310,11 @@
         function handleClearBill() { if (billItems.length > 0) { showConfirmModal('🗑️ बिल क्लियर करें?', 'क्या आप इस बिल के सभी आइटम्स को हटाना चाहते हैं?', () => { billItems = []; document.getElementById('customerName').value = ''; displayBillItems(); updateTotal(); triggerHapticFeedback(); showToast('✅ बिल क्लियर हो गया!', 'success'); }); } }
         function saveBill() { if (billItems.length === 0) { showToast('❌ बिल में कोई आइटम नहीं है!', 'error'); return; } const customerNameInput = document.getElementById('customerName'); const customerName = customerNameInput.value.trim(); if (!customerName) { showToast(translations[currentLanguage].customer_name_required, 'error'); customerNameInput.focus(); customerNameInput.classList.add('error'); setTimeout(() => customerNameInput.classList.remove('error'), 1000); return; } const bill = { id: Date.now(), date: new Date().toLocaleString('hi-IN'), customerName: customerName, items: [...billItems], total: billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) }; billHistory.unshift(bill); billItems = []; customerNameInput.value = ''; displayBillItems(); updateTotal(); displayBillHistory(); triggerHapticFeedback(100); showToast('✅ बिल सेव हो गया!', 'success'); }
         
-        // --- NEW: Bill Download as High-Quality Image ---
+        // Final: Bill Download as High-Quality Image
         function downloadBillAsImage(bill, filename) {
             const renderArea = document.getElementById('bill-render-area');
             const itemsHtml = bill.items.map(item => `
-                <div class="py-2 border-b border-dashed" style="border-color: rgba(0,0,0,0.1);">
+                <div class="py-2 border-b border-dashed" style="border-color: color-mix(in srgb, var(--text) 15%, transparent);">
                     <div class="flex justify-between items-start">
                         <div class="flex-1 pr-2">
                             <p class="font-bold" style="color: var(--text);">${item.name}</p>
@@ -319,13 +325,13 @@
                 </div>`).join('');
 
             renderArea.innerHTML = `
-                <div class="p-5 rounded-lg shadow-lg" style="width: 320px; background-color: var(--card); font-family: 'Inter', sans-serif; display: inline-block;">
+                <div class="p-5 rounded-lg" style="width: 320px; background-color: var(--card); font-family: 'Inter', sans-serif; display: inline-block; border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);">
                     <div class="text-center mb-4">
                         <h2 class="text-2xl font-bold" style="color: var(--primary);">${storeName}</h2>
                         <p class="text-sm" style="color: var(--text-light);">बिल/रसीद</p>
                     </div>
                     <div class="mb-3 text-xs flex justify-between" style="color: var(--text-light);">
-                        <span><strong>ग्राहक:</strong> ${bill.customerName || 'N/A'}</span>
+                        <span class="font-medium"><strong>ग्राहक:</strong> ${bill.customerName || 'N/A'}</span>
                         <span class="text-right"><strong>दिनांक:</strong> ${bill.date}</span>
                     </div>
                     <div class="text-sm">${itemsHtml}</div>
@@ -340,14 +346,26 @@
                     </div>
                 </div>`;
             
-            html2canvas(renderArea.firstElementChild, { scale: 3, useCORS: true, backgroundColor: getComputedStyle(renderArea.firstElementChild).backgroundColor }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                renderArea.innerHTML = '';
-                showToast('📸 बिल इमेज डाउनलोड हो गई!', 'success');
-            });
+            try {
+                const billElement = renderArea.firstElementChild;
+                if (!billElement) { throw new Error("Bill element not found for rendering."); }
+                
+                html2canvas(billElement, { scale: 3, useCORS: true, backgroundColor: getComputedStyle(billElement).backgroundColor })
+                .then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    renderArea.innerHTML = ''; // Clean up after download
+                    showToast('📸 बिल इमेज डाउनलोड हो गई!', 'success');
+                }).catch(err => {
+                    console.error("html2canvas error:", err);
+                    showToast('❌ इमेज बनाने में विफल!', 'error');
+                });
+            } catch(e) {
+                console.error("Download function error:", e);
+                showToast('❌ डाउनलोड विफल!', 'error');
+            }
         }
         function printBill() { 
             if (billItems.length === 0) { showToast('❌ बिल में कोई आइटम नहीं है!', 'error'); return; } 
