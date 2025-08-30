@@ -732,27 +732,31 @@
         }
 
         // ========= PRINT & DOWNLOAD =========
-       function downloadBillAsImage(bill, filename) {
+     function downloadBillAsImage(bill, filename) {
             const renderArea = document.getElementById('bill-render-area');
+            
             const itemsHtml = bill.items.map(item => {
                 const unitLabel = unitTextMap[item.unit] || item.unit;
                 const totalUnits = item.quantity * item.fillingQuantity;
                 const formattedTotalUnits = parseFloat(totalUnits.toFixed(2));
-                return `<div class="py-3 border-b border-dashed">
-                    <div class="flex justify-between items-center">
-                        <div class="flex-1">
-                            <p class="font-bold" style="color: var(--text);">${item.name}</p>
+                
+                return `<div class="py-3 border-b border-dashed" style="border-color: rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex-grow: 1; padding-right: 8px; overflow: hidden;">
+                            <p class="font-bold" style="color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.name}">${item.name}</p>
                             <p class="text-xs" style="color: var(--text-light);">${item.quantity} × (₹${item.price} / ${item.fillingQuantity} ${unitLabel})</p>
                         </div>
-                        <p class="font-bold text-right" style="color: var(--text);">${(item.price * item.quantity).toFixed(2)}</p>
+                        <div style="flex-shrink: 0;">
+                            <p class="font-bold text-right" style="color: var(--text);">₹${(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
                     </div>
-                    <p class="text-right text-xs font-semibold" style="color: var(--secondary);">${formattedTotalUnits} ${unitLabel} = ₹${(item.price * item.quantity).toFixed(2)}</p>
+                    <p class="text-right text-xs font-semibold" style="color: var(--secondary); margin-top: 4px;">कुल: ${formattedTotalUnits} ${unitLabel}</p>
                 </div>`;
             }).join('');
 
-            // यहाँ बदलाव किया गया है: बिल के चारों ओर मार्जिन के लिए एक बाहरी div जोड़ा गया है
+            // बदलाव 1: बाहरी div में rounded-2xl और overflow: hidden जोड़ा गया है
             renderArea.innerHTML = `
-                <div class="p-5" style="display: inline-block; background-color: var(--bg-end);">
+                <div class="p-5 rounded-2xl" style="display: inline-block; background-color: var(--bg-end); overflow: hidden;">
                     <div class="p-6 rounded-xl shadow-lg" style="width: 400px; background-color: var(--card); font-family: 'Inter', sans-serif;">
                         <div class="text-center mb-6">
                             <h2 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h2>
@@ -774,8 +778,13 @@
                         </div>
                     </div>
                 </div>`;
-
-            html2canvas(renderArea.firstElementChild, { scale: 3, useCORS: true }).then(canvas => {
+            
+            // बदलाव 2: html2canvas में backgroundColor: null जोड़ा गया है
+            html2canvas(renderArea.firstElementChild, { 
+                scale: 3, 
+                useCORS: true, 
+                backgroundColor: null // यह कोनों को ट्रांसपेरेंट बनाता है
+            }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
