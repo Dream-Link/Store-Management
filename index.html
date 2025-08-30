@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -504,7 +505,7 @@
         </div>
     </div>
     
-    <div id="bill-render-area" class="fixed top-0 left-0 -translate-x-full bg-gray-100 p-10">
+    <div id="bill-render-area" class="fixed top-0 left-0 -translate-x-full bg-transparent p-10">
         </div>
     <div class="print-area hidden"></div>
     
@@ -638,7 +639,32 @@
         // ========= BILLING MANAGEMENT =========
         function addToBill(productId, element) { const product = products[productId]; if (!product) { showToast('❌ प्रोडक्ट नहीं मिला!', 'error'); return; } const existingItem = billItems.find(item => item.id === productId); if (existingItem) { existingItem.quantity += 1; } else { billItems.push({ id: productId, name: product.name, price: product.price, quantity: 1, unit: product.unit, fillingQuantity: product.fillingQuantity }); } if (element) { element.classList.add('bg-green-300'); setTimeout(() => element.classList.remove('bg-green-300'), 400); } document.getElementById('searchProduct').value = ''; document.getElementById('searchResults').classList.add('hidden'); displayBillItems(); updateTotal(); showToast('✅ प्रोडक्ट बिल में जोड़ा गया!', 'success'); }
         function addToBillFromStore(productId, element) { addToBill(productId, element); showSection('shopping'); }
-        function displayBillItems() { const billDiv = document.getElementById('billItems'); if (billItems.length === 0) { billDiv.innerHTML = `<div class="text-center py-16 text-gray-500 flex flex-col items-center"><svg class="w-16 h-16 text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.343 1.087-.835l1.823-6.812a1.5 1.5 0 00-1.423-1.884H5.318a1.5 1.5 0 00-1.423 1.884l1.823 6.812zM7.5 14.25h11.218M7.5 14.25a3 3 0 01-3-3h.008v.008h-.008v-.008zm12 0a3 3 0 01-3-3h.008v.008h-.008v-.008z" /></svg><h3 class="font-bold text-lg" data-lang-key="empty_state_bill_title">बिल अभी खाली है</h3><p class="text-sm" data-lang-key="empty_state_bill_desc">शुरू करने के लिए प्रोडक्ट जोड़ें।</p></div>`; return; } billDiv.innerHTML = billItems.map((item, index) => { const unitLabel = unitTextMap[item.unit] || item.unit; const totalUnits = item.quantity * item.fillingQuantity; const formattedTotalUnits = parseFloat(totalUnits.toFixed(2)); return `<div class="bg-gray-50 p-2 rounded-lg border fade-in" style="background-color: color-mix(in srgb, var(--text) 5%, transparent);"><div class="flex justify-between items-center gap-2"><div class="flex-1"><h4 class="font-bold text-sm">${item.name}</h4><p class="text-xs text-gray-500">(₹${item.price} / ${item.fillingQuantity} ${unitLabel})</p></div><div class="flex items-center space-x-2"><button onclick="updateQuantity(${index}, -1)" class="w-7 h-7 bg-red-100 text-red-600 rounded-full font-bold hover:bg-red-200 transition-colors">-</button><span class="w-8 text-center font-bold text-sm">${item.quantity}</span><button onclick="updateQuantity(${index}, 1)" class="w-7 h-7 bg-green-100 text-green-600 rounded-full font-bold hover:bg-green-200 transition-colors">+</button></div><div class="font-semibold secondary-text text-sm w-20 text-right">₹${(item.price * item.quantity).toFixed(2)}</div></div></div>`; }).join(''); }
+        function displayBillItems() {
+            const billDiv = document.getElementById('billItems');
+            if (billItems.length === 0) {
+                billDiv.innerHTML = `<div class="text-center py-16 text-gray-500 flex flex-col items-center"><svg class="w-16 h-16 text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.343 1.087-.835l1.823-6.812a1.5 1.5 0 00-1.423-1.884H5.318a1.5 1.5 0 00-1.423 1.884l1.823 6.812zM7.5 14.25h11.218M7.5 14.25a3 3 0 01-3-3h.008v.008h-.008v-.008zm12 0a3 3 0 01-3-3h.008v.008h-.008v-.008z" /></svg><h3 class="font-bold text-lg" data-lang-key="empty_state_bill_title">बिल अभी खाली है</h3><p class="text-sm" data-lang-key="empty_state_bill_desc">शुरू करने के लिए प्रोडक्ट जोड़ें।</p></div>`;
+                return;
+            }
+            billDiv.innerHTML = billItems.map((item, index) => {
+                const unitLabel = unitTextMap[item.unit] || item.unit;
+                return `<div class="bg-gray-50 p-2 rounded-lg border fade-in" style="background-color: color-mix(in srgb, var(--text) 5%, transparent);">
+                    <div class="flex justify-between items-center gap-2">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm">${item.name}</h4>
+                            <p class="text-xs text-gray-500">(₹${item.price} / ${item.fillingQuantity} ${unitLabel})</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="updateQuantity(${index}, -1)" class="w-7 h-7 bg-red-100 text-red-600 rounded-full font-bold hover:bg-red-200 transition-colors">-</button>
+                            <span class="w-8 text-center font-bold text-sm">${item.quantity}</span>
+                            <button onclick="updateQuantity(${index}, 1)" class="w-7 h-7 bg-green-100 text-green-600 rounded-full font-bold hover:bg-green-200 transition-colors">+</button>
+                        </div>
+                    </div>
+                    <div class="text-right font-semibold secondary-text text-sm border-t pt-1 mt-1" style="border-color: color-mix(in srgb, var(--text) 10%, transparent);">
+                       कुल: ₹${(item.price * item.quantity).toFixed(2)}
+                    </div>
+                </div>`;
+            }).join('');
+        }
         function updateQuantity(index, change) {
             if (!billItems[index]) return;
             const newQuantity = billItems[index].quantity + change;
@@ -678,7 +704,100 @@
         }
 
         // ========= PRINT & DOWNLOAD =========
-        function downloadBillAsImage(bill, filename) { const renderArea = document.getElementById('bill-render-area'); const itemsHtml = bill.items.map(item => { const unitLabel = unitTextMap[item.unit] || item.unit; const totalUnits = item.quantity * item.fillingQuantity; const formattedTotalUnits = parseFloat(totalUnits.toFixed(2)); return `<div class="py-3 border-b border-dashed"><div class="flex justify-between items-center"><div class="flex-1"><p class="font-bold" style="color: var(--text);">${item.name}</p><p class="text-xs" style="color: var(--text-light);">${item.quantity} × (₹${item.price} / ${item.fillingQuantity} ${unitLabel})</p></div><p class="font-bold text-right" style="color: var(--text);">${(item.price * item.quantity).toFixed(2)}</p></div><p class="text-right text-xs font-semibold" style="color: var(--secondary);">${formattedTotalUnits} ${unitLabel} = ₹${(item.price * item.quantity).toFixed(2)}</p></div>`; }).join(''); renderArea.innerHTML = `<div class="p-6 rounded-xl shadow-lg" style="width: 400px; background-color: var(--card); font-family: 'Inter', sans-serif;"><div class="text-center mb-6"><h2 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h2><p class="text-sm" style="color: var(--text-light);">बिल/रसीद</p></div><div class="mb-4 text-xs flex justify-between" style="color: var(--text-light);"><p><strong>ग्राहक:</strong> ${bill.customerName || 'N/A'}</p><p><strong>दिनांक:</strong> ${bill.date}</p></div><div class="mb-4">${itemsHtml}</div><div class="mt-6"><div class="flex justify-between items-center rounded-lg p-3" style="background-color: var(--bg-end);"><p class="text-lg font-bold" style="color: var(--secondary);">कुल राशि</p><p class="text-2xl font-bold" style="color: var(--secondary);">₹${bill.total.toFixed(2)}</p></div></div><div class="text-center mt-6 text-xs" style="color: var(--text-light);"><p>🙏 धन्यवाद! 🙏</p></div></div>`; html2canvas(renderArea.firstElementChild, { scale: 3, useCORS: true }).then(canvas => { const link = document.createElement('a'); link.download = filename; link.href = canvas.toDataURL('image/png'); link.click(); renderArea.innerHTML = ''; showToast('📸 बिल इमेज डाउनलोड हो गई!', 'success'); }); }
+        function generateBillHtml(bill) {
+            const computedStyle = getComputedStyle(document.body);
+            const itemsHtml = bill.items.map(item => {
+                const unitLabel = unitTextMap[item.unit] || item.unit;
+                return `<div class="py-2 border-b border-dashed" style="border-color: ${computedStyle.getPropertyValue('--text-light')}50;">
+                    <div class="flex justify-between items-center">
+                        <div class="flex-1 pr-2">
+                            <p class="font-bold text-sm" style="color: ${computedStyle.getPropertyValue('--text')};">${item.name}</p>
+                            <p class="text-xs" style="color: ${computedStyle.getPropertyValue('--text-light')};">${item.quantity} × (₹${item.price} / ${item.fillingQuantity} ${unitLabel})</p>
+                        </div>
+                        <p class="font-bold text-sm text-right" style="color: ${computedStyle.getPropertyValue('--text')};">₹${(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                </div>`;
+            }).join('');
+
+            return `<div id="billContent" class="p-5" style="width: 380px; background-color: ${computedStyle.getPropertyValue('--card')}; font-family: 'Inter', sans-serif; color: ${computedStyle.getPropertyValue('--text')}; border-radius: 0.75rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border: 1px solid ${computedStyle.getPropertyValue('--primary')}50;">
+                <div class="text-center mb-4 pb-2 border-b border-dashed" style="border-color: ${computedStyle.getPropertyValue('--text-light')}50;">
+                    <h2 class="text-2xl font-bold" style="color: ${computedStyle.getPropertyValue('--primary')};">${storeName}</h2>
+                    <p class="text-xs" style="color: ${computedStyle.getPropertyValue('--text-light')};">बिल/रसीद</p>
+                </div>
+                <div class="mb-3 text-xs flex justify-between" style="color: ${computedStyle.getPropertyValue('--text-light')};">
+                    <p><strong>ग्राहक:</strong> ${bill.customerName || 'N/A'}</p>
+                    <p><strong>दिनांक:</strong> ${bill.date}</p>
+                </div>
+                <div class="mb-3">${itemsHtml}</div>
+                <div class="mt-4">
+                    <div class="flex justify-between items-center rounded-lg p-2" style="background-color: ${computedStyle.getPropertyValue('--bg-end')};">
+                        <p class="text-base font-bold" style="color: ${computedStyle.getPropertyValue('--secondary')};">कुल राशि</p>
+                        <p class="text-xl font-bold" style="color: ${computedStyle.getPropertyValue('--secondary')};">₹${bill.total.toFixed(2)}</p>
+                    </div>
+                </div>
+                <div class="text-center mt-4 text-xs" style="color: ${computedStyle.getPropertyValue('--text-light')};"><p>🙏 धन्यवाद! 🙏</p></div>
+            </div>`;
+        }
+
+        function downloadBillAsImage(bill, filename) {
+            const renderArea = document.getElementById('bill-render-area');
+            renderArea.innerHTML = generateBillHtml(bill);
+            const billContent = renderArea.querySelector('#billContent');
+
+            html2canvas(billContent, { scale: 3, useCORS: true, backgroundColor: null })
+            .then(canvas => {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                renderArea.innerHTML = '';
+                showToast('📸 बिल इमेज डाउनलोड हो गई!', 'success');
+            }).catch(err => {
+                console.error("Image generation error:", err);
+                showToast('❌ इमेज बनाने में त्रुटि हुई', 'error');
+                renderArea.innerHTML = '';
+            });
+        }
+        
+        function downloadBillAsPdf(bill, filename) {
+            const { jsPDF } = window.jspdf;
+            const renderArea = document.getElementById('bill-render-area');
+            renderArea.innerHTML = generateBillHtml(bill);
+            const billContent = renderArea.querySelector('#billContent');
+
+            showToast('📄 PDF बनाया जा रहा है...', 'info');
+
+            html2canvas(billContent, { scale: 3, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const canvasAspectRatio = canvas.width / canvas.height;
+                
+                let imgWidth = pdfWidth - 20; // 10mm margin each side
+                let imgHeight = imgWidth / canvasAspectRatio;
+
+                if (imgHeight > pdfHeight - 20) {
+                    imgHeight = pdfHeight - 20; // 10mm margin top/bottom
+                    imgWidth = imgHeight * canvasAspectRatio;
+                }
+
+                const x = (pdfWidth - imgWidth) / 2; // Center horizontally
+                const y = 10; // 10mm margin from top
+
+                pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+                pdf.save(filename);
+
+                renderArea.innerHTML = '';
+                showToast('✅ PDF डाउनलोड हो गया!', 'success');
+            }).catch(err => {
+                console.error("PDF generation error:", err);
+                showToast('❌ PDF बनाने में त्रुटि हुई', 'error');
+                renderArea.innerHTML = '';
+            });
+        }
+
         function printBill() { 
             if (billItems.length === 0) { showToast('❌ बिल में कोई आइटम नहीं है!', 'error'); return; } 
             const customerNameInput = document.getElementById('customerName');
@@ -690,10 +809,17 @@
                 setTimeout(() => customerNameInput.classList.remove('error'), 1000);
                 return;
             }
-            const bill = { customerName: customerName, items: billItems, total: billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0), date: new Date().toLocaleString('hi-IN') };
+            const bill = { customerName, items: billItems, total: billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0), date: new Date().toLocaleString('hi-IN') };
             downloadBillAsImage(bill, `bill_${Date.now()}.png`);
         }
-        function printOldBill(event, billId) { event.stopPropagation(); const bill = billHistory.find(b => b.id === billId); if (!bill) return; downloadBillAsImage(bill, `bill_${bill.id}.png`); }
+
+        function downloadOldBill(event, billId) {
+            event.stopPropagation();
+            const bill = billHistory.find(b => b.id === billId);
+            if (!bill) return;
+            downloadBillAsPdf(bill, `bill_${bill.id}.pdf`);
+        }
+
         function printAllProducts() { toggleMenu(); if (Object.keys(products).length === 0) { showToast('❌ प्रिंट करने के लिए कोई प्रोडक्ट नहीं है!', 'error'); return; } const computedStyle = getComputedStyle(document.body); const themeStyle = `:root { --primary: ${computedStyle.getPropertyValue('--primary')}; --secondary: ${computedStyle.getPropertyValue('--secondary')}; --card: ${computedStyle.getPropertyValue('--card')}; --text: ${computedStyle.getPropertyValue('--text')}; --text-light: ${computedStyle.getPropertyValue('--text-light')}; --bg-start: ${computedStyle.getPropertyValue('--bg-start')}; }`; const productsHtml = Object.values(products).map((p, index) => `<tr class="border-b"><td class="p-3">${index + 1}</td><td class="p-3 font-semibold">${p.name || ''}</td><td class="p-3">₹${p.price ? p.price.toFixed(2) : '0.00'} / ${p.fillingQuantity || 1} ${unitTextMap[p.unit] || p.unit}</td><td class="p-3 font-mono text-xs">${p.barcode || 'N/A'}</td><td class="p-3 text-xs">${p.details || ''}</td></tr>`).join(''); const printContent = `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>${storeName} - सभी प्रोडक्ट्स</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body { font-family: 'Inter', sans-serif; background-color: var(--bg-start); color: var(--text); } ${themeStyle} @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }</style></head><body><div class="container mx-auto p-8"><div class="text-center mb-8 p-4 rounded-lg" style="background-color: var(--card);"><h1 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h1><p style="color: var(--text-light);">सभी प्रोडक्ट्स की सूची</p><p class="text-xs mt-1" style="color: var(--text-light);">${new Date().toLocaleString('hi-IN')}</p></div><div class="rounded-lg shadow-md overflow-hidden" style="background-color: var(--card);"><table class="w-full text-sm"><thead style="background-color: var(--primary); color: white;"><tr><th class="p-3 text-left">#</th><th class="p-3 text-left">नाम</th><th class="p-3 text-left">कीमत/यूनिट</th><th class="p-3 text-left">बारकोड</th><th class="p-3 text-left">विवरण</th></tr></thead><tbody>${productsHtml}</tbody></table></div><div class="text-center mt-6 text-sm" style="color: var(--text-light);">कुल प्रोडक्ट्स: ${Object.keys(products).length}</div></div></body></html>`; const printWindow = window.open('', '_blank'); printWindow.document.write(printContent); printWindow.document.close(); setTimeout(() => { try { printWindow.focus(); printWindow.print(); printWindow.close(); } catch (e) { showToast('❌ प्रिंट पॉप-अप ब्लॉक हो गया', 'error'); } }, 500); }
         
         // ========= THEME & MENU FUNCTIONS =========
@@ -758,7 +884,7 @@
         function closeEditModal() { document.getElementById('editModal').classList.add('hidden'); currentEditingProduct = null; }
         function searchProducts(query) { const resultsDiv = document.getElementById('searchResults'); const trimmedQuery = query.trim(); if (!trimmedQuery) { resultsDiv.classList.add('hidden'); return; } const lowerCaseQuery = trimmedQuery.toLowerCase(); const results = Object.values(products).filter(p => p.name.toLowerCase().includes(lowerCaseQuery) || (p.barcode && p.barcode.includes(lowerCaseQuery))); if (results.length === 0) { resultsDiv.innerHTML = '<div class="text-center py-4 text-gray-500">कोई प्रोडक्ट नहीं मिला</div>'; resultsDiv.classList.remove('hidden'); return; } resultsDiv.innerHTML = results.map(p => ` <div class="bg-gray-50 p-2.5 rounded-lg border cursor-pointer hover:border-[var(--primary)] transition-all" onclick="addToBill('${p.id}', this)" style="background-color: color-mix(in srgb, var(--text) 5%, transparent);"> <div class="font-semibold text-sm">${p.name}</div> <div class="secondary-text font-bold text-sm">₹${p.price} <span class="text-xs text-gray-500"> / ${p.fillingQuantity || 1} ${unitTextMap[p.unit] || p.unit}</span></div> </div>`).join(''); resultsDiv.classList.remove('hidden'); }
         function handleDeleteHistoryItem(event, billId) { event.stopPropagation(); showConfirmModal('🗑️ बिल डिलीट करें?', 'क्या आप वाकई इस बिल को हिस्ट्री से डिलीट करना चाहते हैं?', () => { const index = billHistory.findIndex(b => b.id === billId); if (index > -1) { billHistory.splice(index, 1); displayBillHistory(); showToast('✅ बिल डिलीट हो गया!', 'success'); triggerHapticFeedback(); } }); }
-        function displayBillHistory() { const historyDiv = document.getElementById('billHistory'); if (billHistory.length === 0) { historyDiv.innerHTML = `<div class="text-center py-16 text-gray-500 flex flex-col items-center"><svg class="w-16 h-16 text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg><h3 class="font-bold text-lg" data-lang-key="empty_state_history_title">कोई बिल हिस्ट्री नहीं है</h3><p class="text-sm" data-lang-key="empty_state_history_desc">सेव किए गए बिल यहाँ दिखाई देंगे।</p></div>`; return; } historyDiv.innerHTML = billHistory.map(bill => { const billDetailsHtml = bill.items.map(item => { const unitLabel = unitTextMap[item.unit] || item.unit; const totalUnits = item.quantity * item.fillingQuantity; const formattedTotalUnits = parseFloat(totalUnits.toFixed(2)); return `<div class="border-t first:border-t-0 py-2"><div class="flex justify-between font-semibold"><span>${item.name}</span><span>₹${(item.price * item.quantity).toFixed(2)}</span></div><div class="flex justify-between text-xs text-gray-500"><span>${item.quantity} × (₹${item.price}/${item.fillingQuantity} ${unitLabel})</span><span><span data-lang-key="text_total">कुल</span>: ${formattedTotalUnits} ${unitLabel}</span></div></div>`; }).join(''); return ` <div class="modern-card p-3 cursor-pointer fade-in" onclick="toggleBillDetails(${bill.id})"> <div class="flex justify-between items-center"> <div> <h4 class="font-semibold text-sm">${bill.customerName || `बिल #${bill.id}`}</h4> <p class="text-xs text-gray-500">📅 ${bill.date}</p> </div> <div class="text-right"> <p class="font-bold secondary-text text-base">₹${bill.total.toFixed(2)}</p> </div> </div> <div id="billDetails_${bill.id}" class="hidden mt-3 pt-3 border-t"> <div class="text-sm space-y-1 bg-gray-50 p-2 rounded-lg" style="background-color: color-mix(in srgb, var(--text) 5%, transparent);">${billDetailsHtml}<div class="mt-3 text-center flex justify-center gap-2"> <button onclick="handleDeleteHistoryItem(event, ${bill.id})" class="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-600 transition-colors"><span data-lang-key="btn_delete">डिलीट</span></button> <button onclick="printOldBill(event, ${bill.id})" class="bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-blue-600 transition-colors"><span data-lang-key="btn_download">डाउनलोड</span></button> </div> </div> </div> </div>`; }).join(''); updateDashboardStats(); }
+        function displayBillHistory() { const historyDiv = document.getElementById('billHistory'); if (billHistory.length === 0) { historyDiv.innerHTML = `<div class="text-center py-16 text-gray-500 flex flex-col items-center"><svg class="w-16 h-16 text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg><h3 class="font-bold text-lg" data-lang-key="empty_state_history_title">कोई बिल हिस्ट्री नहीं है</h3><p class="text-sm" data-lang-key="empty_state_history_desc">सेव किए गए बिल यहाँ दिखाई देंगे।</p></div>`; return; } historyDiv.innerHTML = billHistory.map(bill => { const billDetailsHtml = bill.items.map(item => { const unitLabel = unitTextMap[item.unit] || item.unit; const totalUnits = item.quantity * item.fillingQuantity; const formattedTotalUnits = parseFloat(totalUnits.toFixed(2)); return `<div class="border-t first:border-t-0 py-2"><div class="flex justify-between font-semibold"><span>${item.name}</span><span>₹${(item.price * item.quantity).toFixed(2)}</span></div><div class="flex justify-between text-xs text-gray-500"><span>${item.quantity} × (₹${item.price}/${item.fillingQuantity} ${unitLabel})</span><span><span data-lang-key="text_total">कुल</span>: ${formattedTotalUnits} ${unitLabel}</span></div></div>`; }).join(''); return ` <div class="modern-card p-3 cursor-pointer fade-in" onclick="toggleBillDetails(${bill.id})"> <div class="flex justify-between items-center"> <div> <h4 class="font-semibold text-sm">${bill.customerName || `बिल #${bill.id}`}</h4> <p class="text-xs text-gray-500">📅 ${bill.date}</p> </div> <div class="text-right"> <p class="font-bold secondary-text text-base">₹${bill.total.toFixed(2)}</p> </div> </div> <div id="billDetails_${bill.id}" class="hidden mt-3 pt-3 border-t"> <div class="text-sm space-y-1 bg-gray-50 p-2 rounded-lg" style="background-color: color-mix(in srgb, var(--text) 5%, transparent);">${billDetailsHtml}<div class="mt-3 text-center flex justify-center gap-2"> <button onclick="handleDeleteHistoryItem(event, ${bill.id})" class="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-600 transition-colors"><span data-lang-key="btn_delete">डिलीट</span></button> <button onclick="downloadOldBill(event, ${bill.id})" class="bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-blue-600 transition-colors"><span data-lang-key="btn_download">डाउनलोड</span></button> </div> </div> </div> </div>`; }).join(''); updateDashboardStats(); }
         function toggleBillDetails(billId) { document.getElementById(`billDetails_${billId}`).classList.toggle('hidden'); }
         function exportData() { toggleMenu(); const data = { storeName, products, billHistory, currentTheme, notes, exportDate: new Date().toISOString() }; const dataStr = JSON.stringify(data, null, 2); const blob = new Blob([dataStr], {type: 'application/json'}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `${storeName}_backup_${new Date().toISOString().split('T')[0]}.json`; link.click(); showToast('✅ डेटा एक्सपोर्ट हो गया!', 'success'); }
         function importData(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); showConfirmModal('📥 डेटा इम्पोर्ट करें?', 'क्या आप वाकई डेटा इम्पोर्ट करना चाहते हैं? यह मौजूदा डेटा को बदल देगा।', () => { if (data.storeName) storeName = data.storeName; if (data.products) products = data.products; if (data.billHistory) billHistory = data.billHistory; if (data.currentTheme) currentTheme = data.currentTheme; if (data.notes) notes = data.notes; document.getElementById('storeName').textContent = storeName; applyTheme(currentTheme); searchAndSortProducts(); displayBillHistory(); showToast('✅ डेटा सफलतापूर्वक इम्पोर्ट हो गया!', 'success'); }, 'secondary-bg');} catch (error) { showToast('❌ गलत फाइल फॉर्मेट!', 'error'); } }; reader.readAsText(file); event.target.value = ''; }
@@ -808,3 +934,4 @@
 
 </body>
 </html>
+
