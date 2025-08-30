@@ -265,8 +265,7 @@
         function saveBill() { if (billItems.length === 0) { showToast('❌ बिल में कोई आइटम नहीं है!', 'error'); return; } const customerNameInput = document.getElementById('customerName'); const customerName = customerNameInput.value.trim(); if (!customerName) { showToast(translations[currentLanguage].customer_name_required, 'error'); customerNameInput.focus(); customerNameInput.classList.add('error'); setTimeout(() => customerNameInput.classList.remove('error'), 1000); return; } const bill = { id: Date.now(), date: new Date().toLocaleString('hi-IN'), customerName: customerName, items: [...billItems], total: billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0) }; billHistory.unshift(bill); billItems = []; customerNameInput.value = ''; displayBillItems(); updateTotal(); displayBillHistory(); triggerHapticFeedback(100); showToast('✅ बिल सेव हो गया!', 'success'); }
 
         // --- POS Style Bill Generation with Dynamic Height ---
-        function generatePOSBillHTML(bill) {
-            // बदला हुआ: लाइन की चौड़ाई 40 से 48 की गई
+       function generatePOSBillHTML(bill) {
             const LINE_WIDTH = 48; 
             const center = (text) => text.padStart(Math.floor((LINE_WIDTH + text.length) / 2), ' ').padEnd(LINE_WIDTH, ' ');
             const line = '='.repeat(LINE_WIDTH);
@@ -278,14 +277,12 @@
             content += `Date: ${bill.date}\n`;
             content += `Customer: ${bill.customerName || 'N/A'}\n`;
             content += line + '\n';
-            // बदला हुआ: आइटम, मात्रा, रेट, और अमाउंट के लिए स्पेस एडजस्ट किया गया
             content += 'Item'.padEnd(24) + 'Qty'.padStart(6) + 'Rate'.padStart(9) + 'Amount'.padStart(9) + '\n';
             content += line + '\n';
 
             let totalQty = 0;
             bill.items.forEach(item => {
                 totalQty += item.quantity;
-                // बदला हुआ: आइटम के नाम के लिए अब ज्यादा जगह है (23 अक्षर)
                 const itemName = item.name.length > 23 ? item.name.substring(0, 22) + '.' : item.name;
                 const qtyStr = item.quantity.toString();
                 const rateStr = `@${item.price.toFixed(2)}`;
@@ -301,10 +298,10 @@
             content += line + '\n\n';
             content += center('Thank you for your visit!') + '\n';
 
-            // बदला हुआ: कागज़ की चौड़ाई 80mm से 90mm की गई
+            // बदला हुआ: फॉन्ट साइज 10pt से 9pt किया गया है
             return `<!DOCTYPE html><html><head><title>Bill - ${bill.id}</title><style>
                 @page { size: 90mm auto; margin: 3mm; }
-                body { font-family: 'Courier New', monospace; font-size: 10pt; line-height: 1.4; width: 82mm; }
+                body { font-family: 'Courier New', monospace; font-size: 9pt; line-height: 1.4; width: 82mm; }
                 pre { margin: 0; white-space: pre-wrap; word-break: break-all; }
                 @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
             </style></head><body><pre>${content}</pre></body></html>`;
