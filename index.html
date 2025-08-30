@@ -266,7 +266,8 @@
 
         // --- POS Style Bill Generation with Dynamic Height ---
         function generatePOSBillHTML(bill) {
-            const LINE_WIDTH = 40; // Reduced width for 80mm paper
+            // बदला हुआ: लाइन की चौड़ाई 40 से 48 की गई
+            const LINE_WIDTH = 48; 
             const center = (text) => text.padStart(Math.floor((LINE_WIDTH + text.length) / 2), ' ').padEnd(LINE_WIDTH, ' ');
             const line = '='.repeat(LINE_WIDTH);
 
@@ -277,30 +278,33 @@
             content += `Date: ${bill.date}\n`;
             content += `Customer: ${bill.customerName || 'N/A'}\n`;
             content += line + '\n';
-            content += 'Item'.padEnd(18) + 'Qty'.padStart(5) + 'Rate'.padStart(8) + 'Amount'.padStart(9) + '\n';
+            // बदला हुआ: आइटम, मात्रा, रेट, और अमाउंट के लिए स्पेस एडजस्ट किया गया
+            content += 'Item'.padEnd(24) + 'Qty'.padStart(6) + 'Rate'.padStart(9) + 'Amount'.padStart(9) + '\n';
             content += line + '\n';
 
             let totalQty = 0;
             bill.items.forEach(item => {
                 totalQty += item.quantity;
-                const itemName = item.name.length > 17 ? item.name.substring(0, 16) + '.' : item.name;
+                // बदला हुआ: आइटम के नाम के लिए अब ज्यादा जगह है (23 अक्षर)
+                const itemName = item.name.length > 23 ? item.name.substring(0, 22) + '.' : item.name;
                 const qtyStr = item.quantity.toString();
                 const rateStr = `@${item.price.toFixed(2)}`;
                 const amountStr = (item.price * item.quantity).toFixed(2);
-                content += `${itemName.padEnd(18)}${qtyStr.padStart(5)}${rateStr.padStart(8)}${amountStr.padStart(9)}\n`;
+                content += `${itemName.padEnd(24)}${qtyStr.padStart(6)}${rateStr.padStart(9)}${amountStr.padStart(9)}\n`;
             });
 
             content += line + '\n';
-            content += `Total Items: ${bill.items.length}`.padEnd(20) + `Total Qty: ${totalQty}`.padStart(20) + '\n';
-            content += `SUB-TOTAL:`.padEnd(30) + `${bill.total.toFixed(2)}`.padStart(10) + '\n';
+            content += `Total Items: ${bill.items.length}`.padEnd(24) + `Total Qty: ${totalQty}`.padStart(24) + '\n';
+            content += `SUB-TOTAL:`.padEnd(38) + `${bill.total.toFixed(2)}`.padStart(10) + '\n';
             content += line + '\n';
-            content += `GRAND TOTAL:`.padEnd(26) + `₹${bill.total.toFixed(2)}`.padStart(14) + '\n';
+            content += `GRAND TOTAL:`.padEnd(34) + `₹${bill.total.toFixed(2)}`.padStart(14) + '\n';
             content += line + '\n\n';
             content += center('Thank you for your visit!') + '\n';
 
+            // बदला हुआ: कागज़ की चौड़ाई 80mm से 90mm की गई
             return `<!DOCTYPE html><html><head><title>Bill - ${bill.id}</title><style>
-                @page { size: 80mm auto; margin: 3mm; }
-                body { font-family: 'Courier New', monospace; font-size: 10pt; line-height: 1.4; width: 72mm; }
+                @page { size: 90mm auto; margin: 3mm; }
+                body { font-family: 'Courier New', monospace; font-size: 10pt; line-height: 1.4; width: 82mm; }
                 pre { margin: 0; white-space: pre-wrap; word-break: break-all; }
                 @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
             </style></head><body><pre>${content}</pre></body></html>`;
