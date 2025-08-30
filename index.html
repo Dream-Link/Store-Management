@@ -732,7 +732,7 @@
         }
 
         // ========= PRINT & DOWNLOAD =========
-        function downloadBillAsImage(bill, filename) {
+       function downloadBillAsImage(bill, filename) {
             const renderArea = document.getElementById('bill-render-area');
             const itemsHtml = bill.items.map(item => {
                 const unitLabel = unitTextMap[item.unit] || item.unit;
@@ -749,7 +749,32 @@
                     <p class="text-right text-xs font-semibold" style="color: var(--secondary);">${formattedTotalUnits} ${unitLabel} = ₹${(item.price * item.quantity).toFixed(2)}</p>
                 </div>`;
             }).join('');
-            renderArea.innerHTML = `<div class="p-6 rounded-xl shadow-lg" style="width: 400px; background-color: var(--card); font-family: 'Inter', sans-serif;"><div class="text-center mb-6"><h2 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h2><p class="text-sm" style="color: var(--text-light);">बिल/रसीद</p></div><div class="mb-4 text-xs flex justify-between" style="color: var(--text-light);"><p><strong>ग्राहक:</strong> ${bill.customerName || 'N/A'}</p><p><strong>दिनांक:</strong> ${bill.date}</p></div><div class="mb-4">${itemsHtml}</div><div class="mt-6"><div class="flex justify-between items-center rounded-lg p-3" style="background-color: var(--bg-end);"><p class="text-lg font-bold" style="color: var(--secondary);">कुल राशि</p><p class="text-2xl font-bold" style="color: var(--secondary);">₹${bill.total.toFixed(2)}</p></div></div><div class="text-center mt-6 text-xs" style="color: var(--text-light);"><p>🙏 धन्यवाद! 🙏</p></div></div>`;
+
+            // यहाँ बदलाव किया गया है: बिल के चारों ओर मार्जिन के लिए एक बाहरी div जोड़ा गया है
+            renderArea.innerHTML = `
+                <div class="p-5" style="display: inline-block; background-color: var(--bg-end);">
+                    <div class="p-6 rounded-xl shadow-lg" style="width: 400px; background-color: var(--card); font-family: 'Inter', sans-serif;">
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h2>
+                            <p class="text-sm" style="color: var(--text-light);">बिल/रसीद</p>
+                        </div>
+                        <div class="mb-4 text-xs flex justify-between" style="color: var(--text-light);">
+                            <p><strong>ग्राहक:</strong> ${bill.customerName || 'N/A'}</p>
+                            <p><strong>दिनांक:</strong> ${bill.date}</p>
+                        </div>
+                        <div class="mb-4">${itemsHtml}</div>
+                        <div class="mt-6">
+                            <div class="flex justify-between items-center rounded-lg p-3" style="background-color: var(--bg-end);">
+                                <p class="text-lg font-bold" style="color: var(--secondary);">कुल राशि</p>
+                                <p class="text-2xl font-bold" style="color: var(--secondary);">₹${bill.total.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-6 text-xs" style="color: var(--text-light);">
+                            <p>🙏 धन्यवाद! 🙏</p>
+                        </div>
+                    </div>
+                </div>`;
+
             html2canvas(renderArea.firstElementChild, { scale: 3, useCORS: true }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = filename;
