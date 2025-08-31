@@ -406,7 +406,7 @@
             const lowerCaseQuery = trimmedQuery.toLowerCase();
             const results = Object.values(products).filter(p => 
                 p.name.toLowerCase().includes(lowerCaseQuery) || 
-                (p.barcode && p.barcode.includes(lowerCaseQuery)) ||
+                (p.barcode && p.barcode.toLowerCase().includes(lowerCaseQuery)) ||
                 p.id.toString().includes(lowerCaseQuery)
             );
             if (results.length === 0) {
