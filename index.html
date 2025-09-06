@@ -21,6 +21,7 @@
             font-smooth: antialiased;
             -webkit-font-smoothing: antialiased;
         }
+        
         /* --- Themes --- */
         :root { --primary: #3B82F6; --primary-content: #FFFFFF; --secondary: #10B981; --secondary-content: #FFFFFF; --bg-start: #F9FAFB; --bg-end: #F1F5F9; --card: #FFFFFF; --text: #1F2937; --text-light: #6B7280; --border-color: color-mix(in srgb, var(--text) 8%, transparent); --text-heading: var(--text); }
         .theme-blue{--primary:#3B82F6;--primary-content:white;--secondary:#10B981;--secondary-content:white;--bg-start:#F9FAFB;--bg-end:#F1F5F9;--card:white;--text:#1F2937;--text-light:#6B7280;--text-heading:var(--text)}
@@ -39,6 +40,7 @@
         .theme-bumblebee{--primary:#FBBF24;--primary-content:#3A2E00;--secondary:#1F2937;--secondary-content:white;--bg-start:#F0F0F0;--bg-end:#FFFFFF;--card:#FFFFFF;--text:#1F2937;--text-light:#4B5563;--border-color: color-mix(in srgb, var(--text) 15%, transparent);--text-heading:var(--text)}
         .theme-abyss{--primary:#57A6FF;--primary-content:#001937;--secondary:#38BDF8;--secondary-content:#002130;--bg-start:#000B1A;--bg-end:#00172D;--card:#001F3D;--text:#C2E0FF;--text-light:#8ABEFF;--border-color: color-mix(in srgb, var(--text) 20%, transparent);--text-heading:var(--primary)}
         .theme-paper{--primary:#587498;--primary-content:white;--secondary:#A9B4C2;--secondary-content:#1F2937;--bg-start:#FDFCF7;--bg-end:#FFFFFF;--card:#FFFFFF;--text:#3D3D3D;--text-light:#707070;--border-color: color-mix(in srgb, var(--text) 15%, transparent);--text-heading:var(--text)}
+
         /* --- MORE VIBRANT LIGHT THEMES --- */
         .theme-mint{--primary:#10B981;--primary-content:white;--secondary:#059669;--secondary-content:white;--bg-start:#F0FDF4;--bg-end:#DCFCE7;--card:white;--text:#064E3B;--text-light:#065F46;--text-heading:var(--text)}
         .theme-rose{--primary:#F43F5E;--primary-content:white;--secondary:#E11D48;--secondary-content:white;--bg-start:#FFF1F2;--bg-end:#FFE4E6;--card:white;--text:#881337;--text-light:#9F1239;--text-heading:var(--text)}
@@ -77,10 +79,19 @@
         .theme-lavender-light .secondary-text, 
         .theme-arctic .secondary-text, 
         .theme-bumblebee .secondary-text,
-        .theme-paper .secondary-text {
+        .theme-paper .secondary-text,
+        .theme-mint .secondary-text,
+        .theme-rose .secondary-text,
+        .theme-citrus .secondary-text,
+        .theme-sky .secondary-text,
+        .theme-sandstone .secondary-text,
+        .theme-slate .secondary-text,
+        .theme-sakura .secondary-text,
+        .theme-coffee .secondary-text,
+        .theme-retro .secondary-text {
             color: var(--text) !important;
         }
-        
+
         /* --- Compact & Minimal Styles --- */
         body { background-color: var(--bg-start); color: var(--text); transition: background-color 0.3s, color 0.3s; }
         .primary-bg { background-color: var(--primary) !important; }
@@ -703,29 +714,50 @@
         function printBill() { if (billItems.length === 0) { showToast('❌ बिल में कोई आइटम नहीं है!', 'error'); return; } const customerNameInput = document.getElementById('customerName'); const customerName = customerNameInput.value.trim(); if (!customerName) { showToast(translations[currentLanguage].customer_name_required, 'error'); customerNameInput.focus(); customerNameInput.classList.add('error'); setTimeout(() => customerNameInput.classList.remove('error'), 1000); return; } const bill = { customerName: customerName, items: billItems, total: billItems.reduce((sum, item) => sum + (item.price * item.quantity), 0), date: new Date().toISOString(), id: 'Current' }; const billHtml = generateModernBillHTML(bill); const printWindow = window.open('', '_blank'); if (printWindow) { printWindow.document.write(billHtml); printWindow.document.close(); printWindow.focus(); } else { showToast('❌ कृपया पॉप-अप को अनुमति दें', 'error'); } }
         function printOldBill(event, billId) { event.stopPropagation(); const bill = billHistory.find(b => b.id.toString() === billId.toString()); if (!bill) return; const billHtml = generateModernBillHTML(bill); const printWindow = window.open('', '_blank'); if (printWindow) { printWindow.document.write(billHtml); printWindow.document.close(); printWindow.focus(); } else { showToast('❌ कृपया पॉप-अप को अनुमति दें', 'error'); } }
         function printAllProducts() { toggleMenu(); if (Object.keys(products).length === 0) { showToast('❌ प्रिंट करने के लिए कोई प्रोडक्ट नहीं है!', 'error'); return; } const computedStyle = getComputedStyle(document.body); const themeStyle = `:root { --primary: ${computedStyle.getPropertyValue('--primary')}; --secondary: ${computedStyle.getPropertyValue('--secondary')}; --card: ${computedStyle.getPropertyValue('--card')}; --text: ${computedStyle.getPropertyValue('--text')}; --text-light: ${computedStyle.getPropertyValue('--text-light')}; --bg-start: ${computedStyle.getPropertyValue('--bg-start')}; }`; const productsHtml = Object.values(products).map((p, index) => `<tr class="border-b"><td class="p-3">${index + 1}</td><td class="p-3 font-semibold">${p.name || ''}</td><td class="p-3">₹${p.price ? p.price.toFixed(2) : '0.00'} / ${p.fillingQuantity || 1} ${unitTextMap[p.unit] || p.unit}</td><td class="p-3 font-mono text-xs">${p.barcode || 'N/A'}</td><td class="p-3 text-xs">${p.details || ''}</td></tr>`).join(''); const printContent = `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>${storeName} - सभी प्रोडक्ट्स</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body { font-family: 'Inter', sans-serif; background-color: var(--bg-start); color: var(--text); } ${themeStyle} @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }</style></head><body><div class="container mx-auto p-8"><div class="text-center mb-8 p-4 rounded-lg" style="background-color: var(--card);"><h1 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h1><p style="color: var(--text-light);">सभी प्रोडक्ट्स की सूची</p><p class="text-xs mt-1" style="color: var(--text-light);">${new Date().toLocaleString('hi-IN')}</p></div><div class="rounded-lg shadow-md overflow-hidden" style="background-color: var(--card);"><table class="w-full text-sm"><thead style="background-color: var(--primary); color: white;"><tr><th class="p-3 text-left">#</th><th class="p-3 text-left">नाम</th><th class="p-3 text-left">कीमत/यूनिट</th><th class="p-3 text-left">बारकोड</th><th class="p-3 text-left">विवरण</th></tr></thead><tbody>${productsHtml}</tbody></table></div><div class="text-center mt-6 text-sm" style="color: var(--text-light);">कुल प्रोडक्ट्स: ${Object.keys(products).length}</div></div></body></html>`; const printWindow = window.open('', '_blank'); printWindow.document.write(printContent); printWindow.document.close(); setTimeout(() => { try { printWindow.focus(); printWindow.print(); printWindow.close(); } catch (e) { showToast('❌ प्रिंट पॉप-अप ब्लॉक हो गया', 'error'); } }, 500); }
-       function populateThemeSelector() {
+        function populateThemeSelector() {
             const themeGroups = {
                 'सिस्टम': [ { id: 'auto', name: 'डिवाइस थीम', preview: 'auto' } ],
-                'प्रोफेशनल थीम्स': [
+                'लाइट थीम्स': [
                     { id: 'blue', name: 'डिफ़ॉल्ट ब्लू', preview: ['#F3F4F6', '#3B82F6', '#10B981'] },
                     { id: 'executive', name: 'एग्जीक्यूटिव', preview: ['#F8F9FA', '#4A5568', '#718096'] },
                     { id: 'ocean', name: 'ओशन', preview: ['#F0F9FF', '#0891B2', '#38BDF8'] },
                     { id: 'forest', name: 'फॉरेस्ट', preview: ['#F0FFF4', '#2F855A', '#48BB78'] },
                     { id: 'lavender-light', name: 'लैवेंडर', preview: ['#F5F3FF', '#7C3AED', '#A78BFA'] },
                     { id: 'paper', name: 'पेपर', preview: ['#FDFCF7', '#587498', '#A9B4C2'] },
+                    { id: 'arctic', name: 'आर्कटिक', preview: ['#F7F7F7', '#005B96', '#00A896'] },
+                    { id: 'bumblebee', name: 'बम्बलबी', preview: ['#F0F0F0', '#FBBF24', '#1F2937'] },
+                    { id: 'mint', name: 'मिंट', preview: ['#F0FDF4', '#10B981', '#059669'] },
+                    { id: 'rose', name: 'रोज़', preview: ['#FFF1F2', '#F43F5E', '#E11D48'] },
+                    { id: 'citrus', name: 'सिट्रस', preview: ['#FFFBEB', '#F59E0B', '#D97706'] },
+                    { id: 'sky', name: 'स्काई', preview: ['#F0F9FF', '#0EA5E9', '#0284C7'] },
+                    { id: 'sandstone', name: 'सैंडस्टोन', preview: ['#FEFCE8', '#A16207', '#854D0E'] },
+                    { id: 'slate', name: 'स्लेट', preview: ['#F8FAFC', '#64748B', '#475569'] },
+                    { id: 'sakura', name: 'सकुरा', preview: ['#FDF2F8', '#DB2777', '#BE185D'] },
+                    { id: 'coffee', name: 'कॉफ़ी', preview: ['#F5F5DC', '#6F4E37', '#A0522D'] },
+                    { id: 'retro', name: 'रेट्रो', preview: ['#F3EADF', '#D8A778', '#8A6E59'] },
                 ],
-                'हाई कंट्रास्ट': [
+                'डार्क थीम्स': [
                     { id: 'dark', name: 'डिफ़ॉल्ट डार्क', preview: ['#111827', '#5eead4', '#a78bfa'] },
                     { id: 'onyx', name: 'ओनिक्स', preview: ['#121212', '#00E5FF', '#F50057'] },
-                    { id: 'arctic', name: 'आर्कटिक', preview: ['#F7F7F7', '#005B96', '#00A896'] },
                     { id: 'crimson', name: 'क्रिमसन', preview: ['#1A1A1A', '#E53E3E', '#ED8936'] },
-                    { id: 'bumblebee', name: 'बम्बलबी', preview: ['#F0F0F0', '#FBBF24', '#1F2937'] },
-                    { id: 'abyss', name: 'अ abyss', preview: ['#000B1A', '#57A6FF', '#38BDF8'] }
+                    { id: 'abyss', name: 'अबिस', preview: ['#000B1A', '#57A6FF', '#38BDF8'] },
+                    { id: 'steel', name: 'स्टील', preview: ['#1F2937', '#6B7280', '#4B5563'] },
+                    { id: 'espresso', name: 'एस्प्रेसो', preview: ['#221b15', '#A27B5C', '#7B5A49'] },
+                    { id: 'midnight', name: 'मिडनाइट', preview: ['#1E293B', '#818CF8', '#6366F1'] },
+                    { id: 'grape', name: 'ग्रेप', preview: ['#1e1b4b', '#A855F7', '#9333EA'] },
+                    { id: 'neon', name: 'नियॉन', preview: ['#0d0213', '#39FF14', '#F800C8'] },
+                    { id: 'synthwave', name: 'सिंथवेव', preview: ['#21003D', '#F900B3', '#00F0FF'] },
+                    { id: 'cyberpunk', name: 'साइबरपंक', preview: ['#0E0E2C', '#FEE715', '#10E7E7'] },
+                    { id: 'halloween', name: 'हैलोवीन', preview: ['#1C1917', '#F97316', '#A855F7'] },
+                    { id: 'luxury', name: 'लक्ज़री', preview: ['#121212', '#D4AF37', '#4A4A4A'] },
+                    { id: 'emerald', name: 'एमराल्ड', preview: ['#062519', '#059669', '#34D399'] },
+                    { id: 'ruby', name: 'रूबी', preview: ['#2d0d0d', '#E53E3E', '#C53030'] },
                 ]
             };
             const modalContent = document.querySelector('#themeModal .modern-card'); 
             modalContent.innerHTML = `<h3 class="text-lg font-bold mb-3 text-main" data-lang-key="theme_modal_title">🎨 थीम चुनें</h3>`; const container = document.createElement('div'); container.className = 'max-h-80 overflow-y-auto p-1'; Object.entries(themeGroups).forEach(([groupName, themes]) => { const groupTitle = document.createElement('h4'); groupTitle.className = 'font-semibold text-xs text-gray-500 mt-3 first:mt-0 mb-2 px-2 uppercase'; groupTitle.textContent = groupName; container.appendChild(groupTitle); const grid = document.createElement('div'); grid.className = 'grid grid-cols-2 sm:grid-cols-3 gap-2'; themes.forEach(theme => { const button = document.createElement('button'); button.className = 'p-2 rounded-lg border flex flex-col items-center justify-center space-y-2 hover:border-gray-400 transition-all'; button.onclick = () => { changeTheme(theme.id); closeThemeModal(); }; let previewHtml = ''; if (theme.id === 'auto') { previewHtml = `<div class="w-10 h-10 rounded-full overflow-hidden border flex bg-gray-200"><div class="w-1/2 h-full bg-white"></div><div class="w-1/2 h-full" style="background-color: #1F2937;"></div></div>`; } else { previewHtml = `<div class="w-full h-10 rounded-md flex items-center justify-center overflow-hidden border" style="background-color:${theme.preview[0]}"><div class="w-1/2 h-8 rounded-l-md" style="background-color: ${theme.preview[1]};"></div><div class="w-1/2 h-8 rounded-r-md" style="background-color: ${theme.preview[2]};"></div></div>`; } button.innerHTML = `${previewHtml}<span class="text-xs font-medium text-center">${theme.name}</span>`; grid.appendChild(button); }); container.appendChild(grid); }); modalContent.appendChild(container); const closeButton = document.createElement('button'); closeButton.className = 'w-full mt-3 bg-gray-200 text-gray-700 py-2 px-3 rounded-lg font-semibold modern-btn text-sm'; closeButton.textContent = 'बंद करें'; closeButton.dataset.langKey = 'btn_close'; closeButton.onclick = () => history.back(); modalContent.appendChild(closeButton); 
         }
+
         function handleEditStoreName() { toggleMenu(); showPromptModal('स्टोर का नाम बदलें', 'कृपया अपने स्टोर का नया नाम दर्ज करें।', storeName, (newName) => { if (newName && newName.trim()) { storeName = newName.trim(); document.getElementById('storeName').textContent = storeName; document.getElementById('mobileStoreName').textContent = storeName; localStorage.setItem('storeName', storeName); showToast('✅ स्टोर का नाम अपडेट हो गया!', 'success'); } }); }
         function closeEditModal() { toggleBodyScroll(false); document.getElementById('editModal').classList.add('hidden'); currentEditingProduct = null; }
         function searchProducts(query) {
