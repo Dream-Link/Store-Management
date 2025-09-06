@@ -390,7 +390,7 @@
                         </select>
                     </div>
                 </div>
-                <div><label for="manualItemPrice" class="block text-xs font-medium mb-1">एक की कीमत (₹)</label><input type="number" id="manualItemPrice" placeholder="जैसे, 15" class="w-full p-2 modern-input text-sm" required></div>
+               <div><label for="manualItemPrice" class="block text-xs font-medium mb-1">कुल कीमत (₹)</label><input type="number" id="manualItemPrice" placeholder="जैसे, 15" class="w-full p-2 modern-input text-sm" required></div>
             </div>
             <div class="grid grid-cols-2 gap-3 mt-4">
                 <button onclick="history.back()" class="bg-gray-200 text-gray-700 py-2 px-3 rounded-lg font-semibold modern-btn text-sm">बंद करें</button>
@@ -584,13 +584,15 @@
         function closeDashboardResult() { document.getElementById('dashboardScanResult').classList.add('hidden'); }
         function addToBillFromDashboard(productId) { addToBill(productId); showSection('shopping'); }
         function showAddModalWithBarcode(barcode) { closeDashboardResult(); showAddModal(); setTimeout(() => { document.getElementById('productBarcode').value = barcode; fetchProductDetails(barcode); }, 100); }
-        function addManualItemToBill() {
+       function addManualItemToBill() {
             const name = document.getElementById('manualItemName').value.trim();
-            const price = parseFloat(document.getElementById('manualItemPrice').value);
-            const quantity = parseInt(document.getElementById('manualItemQuantity').value);
+            // price को अब हम totalPrice मानेंगे
+            const totalPrice = parseFloat(document.getElementById('manualItemPrice').value); 
+            // quantity को अब हम fillingQuantity मानेंगे
+            const fillingQuantity = parseInt(document.getElementById('manualItemQuantity').value); 
             const unit = document.getElementById('manualItemUnit').value;
 
-            if (!name || isNaN(price) || isNaN(quantity) || price <= 0 || quantity <= 0) {
+            if (!name || isNaN(totalPrice) || isNaN(fillingQuantity) || totalPrice <= 0 || fillingQuantity <= 0) {
                 showToast('❌ कृपया सही नाम, कीमत और मात्रा डालें', 'error');
                 return;
             }
@@ -598,16 +600,24 @@
             const manualItem = {
                 id: 'manual_' + Date.now(),
                 name: name,
-                price: price,
-                quantity: quantity,
+                price: totalPrice, // यहाँ कुल कीमत को price के रूप में सेट करें
+                quantity: 1, // बिल में हम इस आइटम का 1 लॉट जोड़ रहे हैं
                 unit: unit,
-                fillingQuantity: 1
+                fillingQuantity: fillingQuantity // यहाँ कुल मात्रा को fillingQuantity के रूप में सेट करें
             };
 
-            const existingItem = billItems.find(item => item.name === manualItem.name && item.price === manualItem.price && item.id.startsWith('manual_'));
+            // मौजूदा आइटम की जाँच को और सटीक बनाएँ
+            const existingItem = billItems.find(item => 
+                item.id.startsWith('manual_') &&
+                item.name === manualItem.name && 
+                item.price === manualItem.price && 
+                item.fillingQuantity === manualItem.fillingQuantity &&
+                item.unit === manualItem.unit
+            );
             
             if (existingItem) {
-                existingItem.quantity += manualItem.quantity;
+                // अगर समान आइटम पहले से है, तो बस उसकी quantity बढ़ाएँ
+                existingItem.quantity += 1;
             } else {
                  billItems.push(manualItem);
             }
@@ -621,6 +631,7 @@
             } else {
                 closeManualAddModal();
             }
+        }
         }
         function addToBill(productId, element) { const product = products[productId]; if (!product) { showToast('❌ प्रोडक्ट नहीं मिला!', 'error'); return; } const existingItem = billItems.find(item => item.id === productId); if (existingItem) { existingItem.quantity += 1; } else { billItems.push({ id: productId, name: product.name, price: product.price, quantity: 1, unit: product.unit, fillingQuantity: product.fillingQuantity }); } if (element) { element.classList.add('bg-green-300'); setTimeout(() => element.classList.remove('bg-green-300'), 400); } document.getElementById('searchProduct').value = ''; document.getElementById('clearShoppingSearch').classList.add('hidden'); document.getElementById('searchResults').classList.add('hidden'); displayBillItems(); updateTotal(); showToast('✅ प्रोडक्ट बिल में जोड़ा गया!', 'success'); }
         function addToBillFromStore(productId, element) { addToBill(productId, element); showSection('shopping'); }
