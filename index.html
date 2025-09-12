@@ -41,23 +41,21 @@
             --input-bg: #F9FAFB;
         }
 
-        /* --- Dark Theme (Auto-detected via device settings) --- */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary: #0A84FF;
-                --secondary: #30D158;
-                --bg-start: #000000;
-                --bg-end: #1C1C1E;
-                --card: #1C1C1E;
-                --text: #FFFFFF;
-                --text-light: #8D8D93;
-                --border-color: #38383A;
-                --text-heading: #FFFFFF;
-                --text-product-name: #E5E5EA;
-                --text-price: var(--primary);
-                --text-meta: #8D8D93;
-                --input-bg: #2C2C2E;
-            }
+        /* --- Dark Theme (Applied via .dark class on <html> tag) --- */
+        html.dark:root {
+            --primary: #0A84FF;
+            --secondary: #30D158;
+            --bg-start: #000000;
+            --bg-end: #1C1C1E;
+            --card: #1C1C1E;
+            --text: #FFFFFF;
+            --text-light: #8D8D93;
+            --border-color: #38383A;
+            --text-heading: #FFFFFF;
+            --text-product-name: #E5E5EA;
+            --text-price: var(--primary);
+            --text-meta: #8D8D93;
+            --input-bg: #2C2C2E;
         }
 
         /* --- Clean & Simple Styles --- */
@@ -128,7 +126,7 @@
     </aside>
 
     <div class="md:pl-[220px] w-full">
-        <header class="card-bg sticky top-0 z-30 border-b md:hidden no-print" style="border-color: var(--border-color);">
+        <header class="card-bg sticky top-0 z-30 border-b md-hidden no-print" style="border-color: var(--border-color);">
             <div class="px-3">
                 <div class="flex items-center justify-between h-12">
                     <div class="flex items-center">
@@ -145,6 +143,7 @@
                 <div class="p-2 space-y-1">
                     <div class="w-10 h-1.5 bg-gray-300 rounded-full mx-auto mb-2"></div>
                     <button onclick="handleEditStoreName()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg><span data-lang-key="menu_rename_store">स्टोर का नाम बदलें</span></button>
+                    <button onclick="toggleTheme()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg><span>थीम बदलें (लाइट/डार्क)</span></button>
                     <button onclick="toggleLanguage()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 13l4-4M19 5h-4M16 19l-4-4M5 19h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span data-lang-key="menu_change_language">भाषा बदलें / Language</span></button>
                     <button onclick="showNotesModal()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg><span data-lang-key="menu_notes">नोट्स</span></button>
                     <hr class="my-1" style="border-color: var(--border-color);"><button onclick="exportData()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg><span data-lang-key="menu_export">डेटा एक्सपोर्ट करें</span></button>
@@ -329,7 +328,8 @@
                     </div>
                 </div>
                 <div class="space-y-3">
-                    <div><label for="productBarcode" data-lang-key="form_barcode" class="block text-xs font-medium mb-1">बारकोड</label><div class="flex items-center gap-2"><input type="text" id="productBarcode" data-lang-key="placeholder_product_id" placeholder="प्रोडक्ट ID" class="w-full p-2 modern-input text-sm" onchange="fetchProductDetails(this.value)" autocomplete="off"><button onclick="startScanning('store')" id="storeScanBtn" class="primary-bg text-white p-2 rounded-lg font-semibold modern-btn text-sm flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1v4m0 0h-4m4 0l-5-5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5 5" /></svg></button></div></div>
+                    <div><label for="productBarcode" data-lang-key="form_barcode" class="block text-xs font-medium mb-1">बारकोड (स्कैन किया हुआ)</label><div class="flex items-center gap-2"><input type="text" id="productBarcode" data-lang-key="placeholder_product_id" placeholder="प्रोडक्ट ID" class="w-full p-2 modern-input text-sm" onchange="fetchProductDetails(this.value)" autocomplete="off"><button onclick="startScanning('store')" id="storeScanBtn" class="primary-bg text-white p-2 rounded-lg font-semibold modern-btn text-sm flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1v4m0 0h-4m4 0l-5-5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5 5" /></svg></button></div></div>
+                    <div><label for="productManualId" class="block text-xs font-medium mb-1">मैन्युअल ID (आपकी अपनी ID)</label><input type="text" id="productManualId" placeholder="स्कैन करें या खुद टाइप करें" class="w-full p-2 modern-input text-sm"></div>
                     <div><label for="productName" data-lang-key="form_product_name" class="block text-xs font-medium mb-1">प्रोडक्ट का नाम</label><input type="text" id="productName" data-lang-key="placeholder_product_name" placeholder="जैसे, मैगी नूडल्स" class="w-full p-2 modern-input text-sm" required autocomplete="new-password"></div>
                     <div class="grid grid-cols-2 gap-3">
                         <div><label for="productFillingQuantity" data-lang-key="form_quantity" class="block text-xs font-medium mb-1">मात्रा</label><input type="number" id="productFillingQuantity" data-lang-key="placeholder_quantity" placeholder="जैसे, 100" class="w-full p-2 modern-input text-sm" value="1"></div>
@@ -359,6 +359,7 @@
             <h3 class="text-lg font-bold mb-4 text-main"><span data-lang-key="modal_edit_product_emoji">✏️</span> <span data-lang-key="modal_edit_product_title">प्रोडक्ट एडिट करें</span></h3>
             <div class="space-y-3">
                 <div><label for="editProductBarcode" class="block text-xs font-medium mb-1">बारकोड (ID)</label><input type="text" id="editProductBarcode" class="w-full p-2 modern-input text-sm" autocomplete="off"></div>
+                <div><label for="editProductManualId" class="block text-xs font-medium mb-1">मैन्युअल ID</label><input type="text" id="editProductManualId" class="w-full p-2 modern-input text-sm"></div>
                 <div><label for="editProductName" data-lang-key="form_product_name" class="block text-xs font-medium mb-1">प्रोडक्ट का नाम</label><input type="text" id="editProductName" class="w-full p-2 modern-input text-sm" autocomplete="new-password"></div>
                 <div class="grid grid-cols-2 gap-3">
                     <div><label for="editProductFillingQuantity" data-lang-key="form_quantity" class="block text-xs font-medium mb-1">मात्रा</label><input type="number" id="editProductFillingQuantity" class="w-full p-2 modern-input text-sm"></div>
@@ -464,12 +465,10 @@
             let result = '';
             let lowerText = text.toLowerCase();
             
-            // First check for full word matches for better accuracy
             if (map[lowerText]) {
                 return map[lowerText];
             }
 
-            // Fallback to character-based transliteration
             for (let i = 0; i < lowerText.length; i++) {
                 let found = false;
                 for (let len = 4; len > 0; len--) {
@@ -497,10 +496,42 @@
         function showPromptModal(title, message, defaultValue, onConfirm) { toggleBodyScroll(true); const modal = document.getElementById('promptModal'); document.getElementById('promptModalTitle').textContent = title; document.getElementById('promptModalMessage').textContent = message; const input = document.getElementById('promptModalInput'); input.value = defaultValue; const confirmBtn = document.getElementById('promptModalConfirm'); const cancelBtn = document.getElementById('promptModalCancel'); const confirmHandler = () => { onConfirm(input.value); modal.classList.add('hidden'); toggleBodyScroll(false); cleanup(); }; const cancelHandler = () => { modal.classList.add('hidden'); toggleBodyScroll(false); cleanup(); }; const cleanup = () => { confirmBtn.removeEventListener('click', confirmHandler); cancelBtn.removeEventListener('click', cancelHandler); }; confirmBtn.addEventListener('click', confirmHandler); cancelBtn.addEventListener('click', cancelHandler); modal.classList.remove('hidden'); input.focus(); input.select(); }
         function debounce(func, delay) { let timeout; return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; }
         
+        // --- THEME MANAGEMENT ---
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            localStorage.setItem('theme', theme);
+            updateThemeColorMeta();
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            toggleMenu();
+        }
+
+
         document.addEventListener('DOMContentLoaded', function() { 
+            // Theme initialization
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                // Apply device theme by default
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    applyTheme('dark');
+                } else {
+                    applyTheme('light');
+                }
+            }
+            
             document.getElementById('storeName').textContent = storeName; 
             document.getElementById('mobileStoreName').textContent = storeName;
-            updateThemeColorMeta();
+            
             setLanguage(currentLanguage); 
             searchAndSortProducts(); 
             filterAndDisplayHistory(); 
@@ -519,14 +550,12 @@
 
             document.getElementById('productsList').addEventListener('click', handleProductListActions);
 
-            // Payment Modal Listeners
             document.getElementById('paymentTypeCashBtn').addEventListener('click', () => handlePaymentTypeSelection('cash'));
             document.getElementById('paymentTypeCreditBtn').addEventListener('click', () => handlePaymentTypeSelection('credit'));
             document.getElementById('paymentTypeCancelBtn').addEventListener('click', closePaymentTypeModal);
 
-            // Customer Name Suggestion Listener
             document.getElementById('customerName').addEventListener('input', showCustomerSuggestions);
-            document.addEventListener('click', (e) => { // Hide suggestions when clicking outside
+            document.addEventListener('click', (e) => {
                 if (!document.getElementById('customerName').contains(e.target)) {
                     document.getElementById('customerNameSuggestions').classList.add('hidden');
                 }
@@ -541,13 +570,24 @@
         
         function updateThemeColorMeta() {
             setTimeout(() => {
-                const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary').trim();
+                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
                 document.getElementById('theme-color-meta').setAttribute('content', primaryColor);
             }, 50);
         }
 
         function updateDashboardStats() { document.getElementById('totalProductsStat').textContent = Object.keys(products).length; document.getElementById('totalBillsStat').textContent = billHistory.length; }
-        function showAddModal() { toggleBodyScroll(true); document.getElementById('productBarcode').value = ''; document.getElementById('productName').value = ''; document.getElementById('productPrice').value = ''; document.getElementById('productDetails').value = ''; document.getElementById('productFillingQuantity').value = '1'; document.getElementById('productUnit').value = 'piece'; document.getElementById('addProductModal').classList.remove('hidden'); history.pushState({ modal: 'add' }, '', location.href); }
+        function showAddModal() { 
+            toggleBodyScroll(true);
+            document.getElementById('productBarcode').value = '';
+            document.getElementById('productManualId').value = ''; 
+            document.getElementById('productName').value = ''; 
+            document.getElementById('productPrice').value = ''; 
+            document.getElementById('productDetails').value = ''; 
+            document.getElementById('productFillingQuantity').value = '1'; 
+            document.getElementById('productUnit').value = 'piece'; 
+            document.getElementById('addProductModal').classList.remove('hidden'); 
+            history.pushState({ modal: 'add' }, '', location.href); 
+        }
         function closeAddModal() { toggleBodyScroll(false); const modal = document.getElementById('addProductModal'); if (!modal.classList.contains('hidden')) { modal.classList.add('hidden'); if (isScanning) { stopScanning(currentScanningSection); } } }
         function showManualAddModal() { toggleBodyScroll(true); document.getElementById('manualItemName').value = ''; document.getElementById('manualItemPrice').value = ''; document.getElementById('manualItemQuantity').value = '1'; document.getElementById('manualItemUnit').value = 'piece'; document.getElementById('manualAddModal').classList.remove('hidden'); history.pushState({ modal: 'manualAdd' }, '', location.href); }
         function closeManualAddModal() { toggleBodyScroll(false); document.getElementById('manualAddModal').classList.add('hidden'); }
@@ -573,25 +613,47 @@
         }
         function showToast(message, type = 'info') { const toast = document.createElement('div'); const bgColor = type === 'success' ? 'secondary-bg' : type === 'error' ? 'bg-red-500' : 'primary-bg'; toast.className = `fixed top-14 right-3 ${bgColor} text-white px-3 py-1.5 rounded-lg shadow-lg z-50 fade-in text-sm font-medium`; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => { toast.remove(); }, 2000); }
         function showSection(section, pushToHistory = true) { if (currentSection === section && !pushToHistory) return; ['home', 'store', 'shopping', 'history'].forEach(s => { document.getElementById(s + 'Section').classList.add('hidden'); document.getElementById(s + 'TabMobile').classList.remove('active'); document.getElementById(s + 'TabDesktop').classList.remove('active'); }); document.getElementById(section + 'Section').classList.remove('hidden'); document.getElementById(section + 'Section').classList.add('fade-in'); document.getElementById(section + 'TabMobile').classList.add('active'); document.getElementById(section + 'TabDesktop').classList.add('active'); document.getElementById('floatingAddBtn').classList.toggle('hidden', section !== 'store'); currentSection = section; if (pushToHistory) { history.pushState({ section: section }, '', `#${section}`); } if (section === 'store') { searchAndSortProducts(); } else if (isScanning) { stopScanning(currentScanningSection); } }
-        function startScanning(section) { if (isScanning) return; currentScanningSection = section; const scannerDiv = document.getElementById(section + 'Scanner'); scannerDiv.classList.remove('hidden'); isScanning = true; history.pushState({ scanner: 'open' }, '', location.href); const readerElement = document.getElementById(section + 'Reader'); html5QrCode = new Html5Qrcode(readerElement.id); const config = { fps: 25, qrbox: (viewfinderWidth, viewfinderHeight) => ({ width: Math.min(viewfinderWidth, viewfinderHeight) * 0.8, height: Math.min(viewfinderWidth, viewfinderHeight) * 0.6 }), rememberLastUsedCamera: true, supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA], disableFlip: false }; html5QrCode.start({ facingMode: 'environment' }, config, handleScanResult).then(() => { setupCameraControls(section); }).catch(err => { showToast('❌ कैमरा एक्सेस नहीं हो सका।', 'error'); if(history.state && history.state.scanner){ history.back(); } }); }
+        function startScanning(section) { 
+            if (isScanning) return; 
+            currentScanningSection = section; 
+            const scannerDiv = document.getElementById(section + 'Scanner'); 
+            scannerDiv.classList.remove('hidden'); 
+            isScanning = true; 
+            history.pushState({ scanner: 'open' }, '', location.href); 
+            const readerElement = document.getElementById(section + 'Reader'); 
+            html5QrCode = new Html5Qrcode(readerElement.id); 
+            const config = { 
+                fps: 25, 
+                // qrbox REMOVED FOR FULL SCREEN SCANNING
+                rememberLastUsedCamera: true, 
+                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA], 
+                disableFlip: false 
+            }; 
+            html5QrCode.start({ facingMode: 'environment' }, config, handleScanResult)
+                .then(() => { setupCameraControls(section); })
+                .catch(err => { 
+                    showToast('❌ कैमरा एक्सेस नहीं हो सका।', 'error'); 
+                    if(history.state && history.state.scanner){ history.back(); } 
+                }); 
+        }
         function stopScanning(section) { if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop().catch(err => {}); } if (section) { const scannerDiv = document.getElementById(section + 'Scanner'); if (scannerDiv) { scannerDiv.classList.add('hidden'); } const flashIcon = scannerDiv.querySelector('.flash-icon'); if (flashIcon) flashIcon.textContent = '🔦'; } isScanning = false; flashlightEnabled = false; currentCameraTrack = null; }
         function handleScanResult(decodedText, decodedResult) {
             triggerHapticFeedback(50);
             const section = currentScanningSection;
             
+            stopScanning(section);
             if (section === 'store') {
-                stopScanning(section);
                 document.getElementById('productBarcode').value = decodedText;
+                document.getElementById('productManualId').value = decodedText; // Auto-fill manual ID
                 fetchProductDetails(decodedText);
                 showToast('📱 बारकोड स्कैन हो गया!', 'success');
             } else {
-                stopScanning(section);
                 if (history.state && history.state.scanner) {
                     history.back();
                 }
+                const product = Object.values(products).find(p => p.barcode === decodedText || p.manualId === decodedText);
                 if (section === 'shopping') {
-                    if (products[decodedText] || Object.values(products).find(p => p.barcode === decodedText)) {
-                        const product = products[decodedText] || Object.values(products).find(p => p.barcode === decodedText);
+                    if (product) {
                         addToBill(product.id);
                     } else {
                         showToast(`❌ प्रोडक्ट '${decodedText}' स्टोर में नहीं है!`, 'error');
@@ -605,7 +667,32 @@
         function setupCameraControls(section) { const readerElement = document.getElementById(section + 'Reader'); const videoElement = readerElement.querySelector('video'); if (!videoElement || !videoElement.srcObject) return; currentCameraTrack = videoElement.srcObject.getVideoTracks()[0]; const capabilities = currentCameraTrack.getCapabilities(); const zoomControl = document.getElementById(section + 'ZoomControl'); const zoomSlider = document.getElementById(section + 'ZoomSlider'); if (capabilities.zoom) { zoomControl.classList.remove('hidden'); zoomControl.classList.add('flex'); zoomSlider.min = capabilities.zoom.min; zoomSlider.max = capabilities.zoom.max; zoomSlider.step = capabilities.zoom.step; zoomSlider.value = currentCameraTrack.getSettings().zoom || capabilities.zoom.min; } }
         function applyZoom() { if (!currentCameraTrack || !currentScanningSection) return; const zoomSlider = document.getElementById(currentScanningSection + 'ZoomSlider'); if(zoomSlider) { const zoomValue = parseFloat(zoomSlider.value); currentCameraTrack.applyConstraints({ advanced: [{ zoom: zoomValue }] }).catch(e => console.error("Zoom apply error:", e)); } }
         function toggleFlashlight(section) { if (!currentCameraTrack) { showToast('❌ कैमरा ट्रैक नहीं मिला।', 'error'); return; } const capabilities = currentCameraTrack.getCapabilities(); if (capabilities.torch) { flashlightEnabled = !flashlightEnabled; currentCameraTrack.applyConstraints({ advanced: [{ torch: flashlightEnabled }] }).then(() => { const scannerControls = document.querySelector(`#${section}Scanner .scanner-controls`); const flashIcon = scannerControls.querySelector('.flash-icon'); if(flashIcon) flashIcon.textContent = flashlightEnabled ? '💡' : '🔦'; }).catch(() => showToast('❌ फ्लैशलाइट ऑन नहीं हो सकी', 'error')); } else { showToast('❌ इस डिवाइस पर फ्लैशलाइट सपोर्ट नहीं है', 'error'); } }
-        function addProduct() { const barcode = document.getElementById('productBarcode').value.trim(); const name = document.getElementById('productName').value.trim(); const price = parseFloat(document.getElementById('productPrice').value); const details = document.getElementById('productDetails').value.trim(); const fillingQuantity = parseFloat(document.getElementById('productFillingQuantity').value) || 1; const unit = document.getElementById('productUnit').value; if (!name || isNaN(price) || isNaN(fillingQuantity) || fillingQuantity <= 0) { showToast('❌ कृपया सही नाम, कीमत और मात्रा डालें', 'error'); return; } const productId = barcode || Date.now().toString(); if(products[productId]){ showToast('❌ यह बारकोड ID पहले से मौजूद है!', 'error'); return; } products[productId] = { id: productId, barcode, name, price, details, fillingQuantity, unit, dateAdded: new Date().toISOString() }; triggerHapticFeedback(); if (history.state && history.state.modal) { history.back(); } else { closeAddModal(); } searchAndSortProducts(); showToast('✅ प्रोडक्ट सफलतापूर्वक जोड़ा गया!', 'success'); }
+        function addProduct() { 
+            const barcode = document.getElementById('productBarcode').value.trim();
+            const manualId = document.getElementById('productManualId').value.trim();
+            const name = document.getElementById('productName').value.trim(); 
+            const price = parseFloat(document.getElementById('productPrice').value); 
+            const details = document.getElementById('productDetails').value.trim(); 
+            const fillingQuantity = parseFloat(document.getElementById('productFillingQuantity').value) || 1; 
+            const unit = document.getElementById('productUnit').value; 
+
+            if (!name || isNaN(price) || isNaN(fillingQuantity) || fillingQuantity <= 0) { 
+                showToast('❌ कृपया सही नाम, कीमत और मात्रा डालें', 'error'); return; 
+            }
+            if (!manualId && !barcode) {
+                showToast('❌ कृपया बारकोड स्कैन करें या मैन्युअल ID डालें', 'error'); return;
+            }
+
+            const productId = manualId || barcode; // Prioritize Manual ID
+            if(products[productId]){ 
+                showToast('❌ यह मैन्युअल ID/बारकोड पहले से मौजूद है!', 'error'); return; 
+            } 
+            products[productId] = { id: productId, barcode, manualId, name, price, details, fillingQuantity, unit, dateAdded: new Date().toISOString() }; 
+            triggerHapticFeedback(); 
+            if (history.state && history.state.modal) { history.back(); } else { closeAddModal(); } 
+            searchAndSortProducts(); 
+            showToast('✅ प्रोडक्ट सफलतापूर्वक जोड़ा गया!', 'success'); 
+        }
         const debouncedSearch = debounce(searchAndSortProducts, 300);
         function searchAndSortProducts() { 
             const searchQuery = document.getElementById('storeSearchInput').value.trim().toLowerCase(); 
@@ -616,7 +703,8 @@
                 productArray = productArray.filter(p => 
                     p.name.toLowerCase().includes(searchQuery) ||
                     (hinglishQuery && p.name.includes(hinglishQuery)) ||
-                    (p.barcode && p.barcode.toLowerCase().includes(searchQuery)) || 
+                    (p.barcode && p.barcode.toLowerCase().includes(searchQuery)) ||
+                    (p.manualId && p.manualId.toLowerCase().includes(searchQuery)) || 
                     p.id.toString().includes(searchQuery)
                 ); 
             } 
@@ -651,7 +739,7 @@
                     
                     if (storeView === 'grid') {
                         card.className = 'modern-card p-2.5 flex flex-col justify-between fade-in';
-                        cardHTML = `<div class="flex-grow"><div class="flex justify-between items-start gap-2 mb-1"><h4 class="font-bold text-sm leading-tight flex-1 product-name-text">${p.name}</h4><div class="barcode-badge" title="#${p.barcode || p.id}">${p.barcode || p.id}</div></div><p class="price-text font-bold text-md mb-1">₹${p.price} <span class="text-xs font-medium meta-text">/ ${p.fillingQuantity || 1} ${unitLabel}</span></p>${p.details ? `<p class="text-xs" style="color: var(--text-light);">${p.details}</p>` : ''}</div><div class="border-t pt-2 mt-2 text-xs" style="border-color: color-mix(in srgb, var(--text) 8%, transparent);">${buttonsHTML}</div>`;
+                        cardHTML = `<div class="flex-grow"><div class="flex justify-between items-start gap-2 mb-1"><h4 class="font-bold text-sm leading-tight flex-1 product-name-text">${p.name}</h4><div class="barcode-badge" title="#${p.manualId || p.id}">${p.manualId || p.id}</div></div><p class="price-text font-bold text-md mb-1">₹${p.price} <span class="text-xs font-medium meta-text">/ ${p.fillingQuantity || 1} ${unitLabel}</span></p>${p.details ? `<p class="text-xs" style="color: var(--text-light);">${p.details}</p>` : ''}</div><div class="border-t pt-2 mt-2 text-xs" style="border-color: color-mix(in srgb, var(--text) 8%, transparent);">${buttonsHTML}</div>`;
                     } else {
                         const isCompact = storeView === 'compact';
                         let listButtonsHTML = '';
@@ -670,13 +758,61 @@
             updateDashboardStats();
         }
         function handleProductListActions(event) { const button = event.target.closest('[data-action]'); if (!button) return; const card = button.closest('[data-id]'); const productId = card.dataset.id; const action = button.dataset.action; switch (action) { case 'add': addToBillFromStore(productId, button); break; case 'edit': editProduct(productId); break; case 'delete': handleDeleteProduct(productId); break; } }
-        function editProduct(productId) { toggleBodyScroll(true); const product = products[productId]; if (!product) return; currentEditingProduct = productId; document.getElementById('editProductBarcode').value = product.barcode || product.id; document.getElementById('editProductName').value = product.name; document.getElementById('editProductPrice').value = product.price; document.getElementById('editProductDetails').value = product.details || ''; document.getElementById('editProductFillingQuantity').value = product.fillingQuantity || 1; document.getElementById('editProductUnit').value = product.unit || 'piece'; document.getElementById('editModal').classList.remove('hidden'); history.pushState({ modal: 'edit' }, '', location.href); }
-        function updateProduct() { if (!currentEditingProduct) return; const newBarcode = document.getElementById('editProductBarcode').value.trim(); const oldBarcode = currentEditingProduct; if (newBarcode !== oldBarcode && products[newBarcode]) { showToast('❌ यह बारकोड ID पहले से मौजूद है!', 'error'); return; } const name = document.getElementById('editProductName').value.trim(); const price = parseFloat(document.getElementById('editProductPrice').value); const details = document.getElementById('editProductDetails').value.trim(); const fillingQuantity = parseFloat(document.getElementById('editProductFillingQuantity').value) || 1; const unit = document.getElementById('editProductUnit').value; if (!name || isNaN(price) || isNaN(fillingQuantity) || fillingQuantity <= 0) { showToast('❌ कृपया सही नाम, कीमत और मात्रा डालें', 'error'); return; } const updatedProduct = { ...products[oldBarcode], id: newBarcode || Date.now().toString(), barcode: newBarcode, name, price, details, fillingQuantity, unit }; if (newBarcode !== oldBarcode) { delete products[oldBarcode]; } products[updatedProduct.id] = updatedProduct; triggerHapticFeedback(); if (history.state && history.state.modal) { history.back(); } else { closeEditModal(); } searchAndSortProducts(); showToast('✅ प्रोडक्ट अपडेट हो गया!', 'success'); }
+        function editProduct(productId) { toggleBodyScroll(true); const product = products[productId]; if (!product) return; currentEditingProduct = productId; document.getElementById('editProductBarcode').value = product.barcode || ''; document.getElementById('editProductManualId').value = product.manualId || ''; document.getElementById('editProductName').value = product.name; document.getElementById('editProductPrice').value = product.price; document.getElementById('editProductDetails').value = product.details || ''; document.getElementById('editProductFillingQuantity').value = product.fillingQuantity || 1; document.getElementById('editProductUnit').value = product.unit || 'piece'; document.getElementById('editModal').classList.remove('hidden'); history.pushState({ modal: 'edit' }, '', location.href); }
+        function updateProduct() { 
+            if (!currentEditingProduct) return; 
+            
+            const newBarcode = document.getElementById('editProductBarcode').value.trim();
+            const newManualId = document.getElementById('editProductManualId').value.trim();
+            const newProductId = newManualId || newBarcode;
+            
+            if (!newProductId) {
+                showToast('❌ मैन्युअल ID या बारकोड खाली नहीं हो सकता!', 'error'); return;
+            }
+            if (newProductId !== currentEditingProduct && products[newProductId]) { 
+                showToast('❌ यह मैन्युअल ID/बारकोड पहले से मौजूद है!', 'error'); return; 
+            } 
+            
+            const name = document.getElementById('editProductName').value.trim(); 
+            const price = parseFloat(document.getElementById('editProductPrice').value); 
+            const details = document.getElementById('editProductDetails').value.trim(); 
+            const fillingQuantity = parseFloat(document.getElementById('editProductFillingQuantity').value) || 1; 
+            const unit = document.getElementById('editProductUnit').value; 
+            
+            if (!name || isNaN(price) || isNaN(fillingQuantity) || fillingQuantity <= 0) { 
+                showToast('❌ कृपया सही नाम, कीमत और मात्रा डालें', 'error'); return; 
+            } 
+            
+            const updatedProduct = { ...products[currentEditingProduct], id: newProductId, barcode: newBarcode, manualId: newManualId, name, price, details, fillingQuantity, unit }; 
+            
+            delete products[currentEditingProduct]; // Delete old entry
+            products[newProductId] = updatedProduct; // Add new entry with new ID
+
+            triggerHapticFeedback(); 
+            if (history.state && history.state.modal) { history.back(); } else { closeEditModal(); } 
+            searchAndSortProducts(); 
+            showToast('✅ प्रोडक्ट अपडेट हो गया!', 'success'); 
+        }
         function handleDeleteProduct(productId) { showConfirmModal('🗑️ प्रोडक्ट डिलीट करें?', 'क्या आप वाकई इस प्रोडक्ट को डिलीट करना चाहते हैं? यह एक्शन वापस नहीं लिया जा सकता।', () => { delete products[productId]; triggerHapticFeedback(); searchAndSortProducts(); showToast('✅ प्रोडक्ट डिलीट हो गया!', 'success'); }); }
-        function displayDashboardScanResult(barcode) { const resultDiv = document.getElementById('dashboardScanResult'); const product = products[barcode] || Object.values(products).find(p => p.barcode === barcode); resultDiv.classList.remove('hidden'); resultDiv.innerHTML = ''; const content = document.createElement('div'); content.className = 'fade-in'; let productInfoHtml = ''; if (product) { const unitLabel = unitTextMap[product.unit] || product.unit; productInfoHtml = `<h4 class="font-bold text-md mb-1 product-name-text">${product.name}</h4><p class="price-text font-bold text-lg mb-2">₹${product.price} <span class="text-sm font-medium meta-text">/ ${product.fillingQuantity || 1} ${unitLabel}</span></p>${product.details ? `<p class="text-sm mb-3" style="color:var(--text-light)">${product.details}</p>` : ''}<button onclick="addToBillFromDashboard('${product.id}')" class="w-full secondary-bg text-white py-2 px-3 rounded-lg font-semibold modern-btn text-sm" data-lang-key="scan_add_to_bill">बिल में जोड़ें</button>`; } else { productInfoHtml = `<p class="text-center font-semibold text-red-600" data-lang-key="scan_result_not_found">प्रोडक्ट स्टोर में नहीं मिला!</p><p class="text-center text-sm my-2" style="color:var(--text-light)">बारकोड: ${barcode}</p><button onclick="showAddModalWithBarcode('${barcode}')" class="w-full primary-bg text-white py-2 px-3 rounded-lg font-semibold modern-btn text-sm" data-lang-key="scan_add_as_new">इसे नए प्रोडक्ट के रूप में जोड़ें</button>`; } content.innerHTML = `<div class="flex justify-between items-center mb-2 pb-2 border-b" style="border-color: var(--border-color);"><h4 class="font-bold text-sm" data-lang-key="scan_result_title" style="color:var(--text-light)">स्कैन का परिणाम</h4><button onclick="closeDashboardResult()" class="text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button></div>${productInfoHtml}`; resultDiv.appendChild(content); setLanguage(currentLanguage); }
+        function displayDashboardScanResult(barcode) { 
+            const resultDiv = document.getElementById('dashboardScanResult'); 
+            const product = Object.values(products).find(p => p.barcode === barcode || p.manualId === barcode);
+            resultDiv.classList.remove('hidden'); resultDiv.innerHTML = ''; 
+            const content = document.createElement('div'); content.className = 'fade-in'; 
+            let productInfoHtml = ''; 
+            if (product) { 
+                const unitLabel = unitTextMap[product.unit] || product.unit; 
+                productInfoHtml = `<h4 class="font-bold text-md mb-1 product-name-text">${product.name}</h4><p class="price-text font-bold text-lg mb-2">₹${product.price} <span class="text-sm font-medium meta-text">/ ${product.fillingQuantity || 1} ${unitLabel}</span></p>${product.details ? `<p class="text-sm mb-3" style="color:var(--text-light)">${product.details}</p>` : ''}<button onclick="addToBillFromDashboard('${product.id}')" class="w-full secondary-bg text-white py-2 px-3 rounded-lg font-semibold modern-btn text-sm" data-lang-key="scan_add_to_bill">बिल में जोड़ें</button>`; 
+            } else { 
+                productInfoHtml = `<p class="text-center font-semibold text-red-600" data-lang-key="scan_result_not_found">प्रोडक्ट स्टोर में नहीं मिला!</p><p class="text-center text-sm my-2" style="color:var(--text-light)">ID: ${barcode}</p><button onclick="showAddModalWithBarcode('${barcode}')" class="w-full primary-bg text-white py-2 px-3 rounded-lg font-semibold modern-btn text-sm" data-lang-key="scan_add_as_new">इसे नए प्रोडक्ट के रूप में जोड़ें</button>`; 
+            } 
+            content.innerHTML = `<div class="flex justify-between items-center mb-2 pb-2 border-b" style="border-color: var(--border-color);"><h4 class="font-bold text-sm" data-lang-key="scan_result_title" style="color:var(--text-light)">स्कैन का परिणाम</h4><button onclick="closeDashboardResult()" class="text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button></div>${productInfoHtml}`; 
+            resultDiv.appendChild(content); 
+            setLanguage(currentLanguage); 
+        }
         function closeDashboardResult() { document.getElementById('dashboardScanResult').classList.add('hidden'); }
         function addToBillFromDashboard(productId) { addToBill(productId); showSection('shopping'); }
-        function showAddModalWithBarcode(barcode) { closeDashboardResult(); showAddModal(); setTimeout(() => { document.getElementById('productBarcode').value = barcode; fetchProductDetails(barcode); }, 100); }
+        function showAddModalWithBarcode(barcode) { closeDashboardResult(); showAddModal(); setTimeout(() => { document.getElementById('productBarcode').value = barcode; document.getElementById('productManualId').value = barcode; fetchProductDetails(barcode); }, 100); }
         
         function addManualItemToBill() {
             const name = document.getElementById('manualItemName').value.trim();
@@ -827,7 +963,25 @@
             }
         }
         
-        function generateModernBillHTML(bill) { const s = getComputedStyle(document.body); const theme = { primary: s.getPropertyValue('--primary'), secondary: s.getPropertyValue('--secondary'), bg_end: s.getPropertyValue('--bg-end'), card: s.getPropertyValue('--card'), text: s.getPropertyValue('--text'), text_light: s.getPropertyValue('--text-light') }; let itemsHtml = ''; bill.items.forEach(item => { const totalUnits = item.quantity * (item.fillingQuantity || 1); const formattedTotalUnits = parseFloat(totalUnits.toFixed(2).replace(/\.00$/, '')); const unitLabel = unitTextMap[item.unit] || item.unit; itemsHtml += `<tr class="border-b" style="border-color: ${theme.bg_end};"><td class="py-3 px-4 text-left">${item.name}</td><td class="py-3 px-4 text-center">${formattedTotalUnits} ${unitLabel}</td><td class="py-3 px-4 text-right">₹${(item.price * item.quantity).toFixed(2)}</td></tr>`; }); let paymentStatusHtml = ''; if (bill.paymentType) { const statusText = bill.paymentType === 'credit' ? 'उधार (Credit)' : 'नगद (Cash)'; const statusColor = bill.paymentType === 'credit' ? '#EF4444' : '#22C55E'; paymentStatusHtml = `<div class="text-right"><p class="text-sm font-semibold" style="color:${theme.text_light};">STATUS</p><p class="font-bold text-lg" style="color:${statusColor};">${statusText}</p></div>`; } return `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>Bill - ${bill.id}</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');body{font-family:'Inter',sans-serif;background-color:${theme.bg_end};color:${theme.text};}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}</style></head><body class="p-4 sm:p-8"><div class="max-w-2xl mx-auto bg-[${theme.card}] rounded-xl shadow-lg p-6 sm:p-8"><div class="flex justify-between items-start pb-4 border-b" style="border-color:${theme.bg_end};"><div class="text-left"><h1 class="text-2xl font-bold" style="color:${theme.primary};">${storeName}</h1><p style="color:${theme.text_light};">INVOICE</p></div><div class="text-right"><p class="font-semibold">बिल #${bill.id}</p><p class="text-sm" style="color:${theme.text_light};">${new Date(bill.date).toLocaleString('hi-IN')}</p></div></div><div class="flex justify-between items-center py-4"><div class="text-left"><p class="text-sm" style="color:${theme.text_light};">BILL TO</p><p class="font-semibold">${bill.customerName || 'N/A'}</p></div>${paymentStatusHtml}</div><div class="w-full overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-[${theme.bg_end}]"><th class="py-2 px-4 text-left font-semibold" style="color:${theme.primary};">प्रोडक्ट</th><th class="py-2 px-4 text-center font-semibold" style="color:${theme.primary};">मात्रा</th><th class="py-2 px-4 text-right font-semibold" style="color:${theme.primary};">कुल</th></tr></thead><tbody>${itemsHtml}</tbody></table></div><div class="flex justify-end pt-6 mt-6 border-t" style="border-color:${theme.bg_end};"><div class="w-full max-w-xs text-right"><div class="flex justify-between mb-2"><span style="color:${theme.text_light};">Subtotal</span><span>₹${bill.total.toFixed(2)}</span></div><div class="flex justify-between font-bold text-lg" style="color:${theme.secondary};"><span class="font-bold">कुल राशि</span><span>₹${bill.total.toFixed(2)}</span></div></div></div><div class="text-center mt-8 pt-4 border-t" style="border-color:${theme.bg_end};"><p class="text-xs" style="color:${theme.text_light};">Thank you for your visit!</p></div></div></body></html>`; }
+        function generateModernBillHTML(bill) { 
+            const s = getComputedStyle(document.body); 
+            const theme = { primary: '#007AFF', secondary: '#34C759', bg_end: '#F9FAFB', card: '#FFFFFF', text: '#111827', text_light: '#6B7280', border: '#E5E7EB' }; 
+            let itemsHtml = ''; 
+            bill.items.forEach((item, index) => { 
+                const totalUnits = item.quantity * (item.fillingQuantity || 1); 
+                const formattedTotalUnits = parseFloat(totalUnits.toFixed(2).replace(/\.00$/, '')); 
+                const unitLabel = unitTextMap[item.unit] || item.unit; 
+                const rowStyle = index % 2 === 0 ? `background-color: ${theme.bg_end};` : '';
+                itemsHtml += `<tr style="${rowStyle}"><td style="padding: 10px 12px; text-align: left; border-bottom: 1px solid ${theme.border};">${item.name}</td><td style="padding: 10px 12px; text-align: center; border-bottom: 1px solid ${theme.border};">${formattedTotalUnits} ${unitLabel}</td><td style="padding: 10px 12px; text-align: right; border-bottom: 1px solid ${theme.border};">₹${(item.price * item.quantity).toFixed(2)}</td></tr>`; 
+            }); 
+            let paymentStatusHtml = ''; 
+            if (bill.paymentType) { 
+                const statusText = bill.paymentType === 'credit' ? 'उधार (Credit)' : 'नगद (Cash)'; 
+                const statusColor = bill.paymentType === 'credit' ? '#EF4444' : '#22C55E'; 
+                paymentStatusHtml = `<div style="text-align: right;"><p style="font-size: 0.8rem; color:${theme.text_light}; font-weight: 600;">STATUS</p><p style="font-weight: 700; font-size: 1.1rem; color:${statusColor};">${statusText}</p></div>`; 
+            } 
+            return `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>Bill - ${bill.id}</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');body{font-family:'Inter',sans-serif;background-color:#f3f4f6;color:${theme.text};}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}</style></head><body style="padding: 1rem;"><div style="max-width: 42rem; margin: auto; background-color:${theme.card}; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 2rem; border: 1px solid ${theme.border};"><div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid ${theme.border};"><div style="text-align: left;"><h1 style="font-size: 1.5rem; font-weight: 700; color:${theme.primary};">${storeName}</h1><p style="color:${theme.text_light};">INVOICE</p></div><div style="text-align: right;"><p style="font-weight: 600;">बिल #${bill.id}</p><p style="font-size: 0.875rem; color:${theme.text_light};">${new Date(bill.date).toLocaleString('hi-IN')}</p></div></div><div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;"><div style="text-align: left;"><p style="font-size: 0.8rem; color:${theme.text_light};">BILL TO</p><p style="font-weight: 600;">${bill.customerName || 'N/A'}</p></div>${paymentStatusHtml}</div><div style="width: 100%; overflow-x: auto;"><table style="width: 100%; font-size: 0.875rem; border-collapse: collapse;"><thead><tr style="background-color: ${theme.bg_end};"><th style="padding: 8px 12px; text-align: left; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">प्रोडक्ट</th><th style="padding: 8px 12px; text-align: center; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">मात्रा</th><th style="padding: 8px 12px; text-align: right; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">कुल</th></tr></thead><tbody>${itemsHtml}</tbody></table></div><div style="display: flex; justify-content: flex-end; padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid ${theme.border};"><div style="width: 100%; max-width: 16rem; text-align: right;"><div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;"><span style="color:${theme.text_light};">Subtotal</span><span>₹${bill.total.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.125rem; color:${theme.secondary};"><span style="font-weight: 700;">कुल राशि</span><span>₹${bill.total.toFixed(2)}</span></div></div></div><div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid ${theme.border};"><p style="font-size: 0.75rem; color:${theme.text_light};">Thank you for your visit!</p></div></div></body></html>`; 
+        }
         
         function printOldBill(event, billId) { event.stopPropagation(); const bill = billHistory.find(b => b.id.toString() === billId.toString()); if (!bill) return; const billHtml = generateModernBillHTML(bill); const printWindow = window.open('', '_blank'); if (printWindow) { printWindow.document.write(billHtml); printWindow.document.close(); printWindow.focus(); } else { showToast('❌ कृपया पॉप-अप को अनुमति दें', 'error'); } }
         function printAllProducts() { toggleMenu(); if (Object.keys(products).length === 0) { showToast('❌ प्रिंट करने के लिए कोई प्रोडक्ट नहीं है!', 'error'); return; } const computedStyle = getComputedStyle(document.body); const themeStyle = `:root { --primary: ${computedStyle.getPropertyValue('--primary')}; --secondary: ${computedStyle.getPropertyValue('--secondary')}; --card: ${computedStyle.getPropertyValue('--card')}; --text: ${computedStyle.getPropertyValue('--text')}; --text-light: ${computedStyle.getPropertyValue('--text-light')}; --bg-start: ${computedStyle.getPropertyValue('--bg-start')}; }`; const productsHtml = Object.values(products).map((p, index) => `<tr class="border-b"><td class="p-3">${index + 1}</td><td class="p-3 font-semibold">${p.name || ''}</td><td class="p-3">₹${p.price ? p.price.toFixed(2) : '0.00'} / ${p.fillingQuantity || 1} ${unitTextMap[p.unit] || p.unit}</td><td class="p-3 font-mono text-xs">${p.barcode || 'N/A'}</td><td class="p-3 text-xs">${p.details || ''}</td></tr>`).join(''); const printContent = `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>${storeName} - सभी प्रोडक्ट्स</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body { font-family: 'Inter', sans-serif; background-color: var(--bg-start); color: var(--text); } ${themeStyle} @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }</style></head><body><div class="container mx-auto p-8"><div class="text-center mb-8 p-4 rounded-lg" style="background-color: var(--card);"><h1 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h1><p style="color: var(--text-light);">सभी प्रोडक्ट्स की सूची</p><p class="text-xs mt-1" style="color: var(--text-light);">${new Date().toLocaleString('hi-IN')}</p></div><div class="rounded-lg shadow-md overflow-hidden" style="background-color: var(--card);"><table class="w-full text-sm"><thead style="background-color: var(--primary); color: white;"><tr><th class="p-3 text-left">#</th><th class="p-3 text-left">नाम</th><th class="p-3 text-left">कीमत/यूनिट</th><th class="p-3 text-left">बारकोड</th><th class="p-3 text-left">विवरण</th></tr></thead><tbody>${productsHtml}</tbody></table></div><div class="text-center mt-6 text-sm" style="color: var(--text-light);">कुल प्रोडक्ट्स: ${Object.keys(products).length}</div></div></body></html>`; const printWindow = window.open('', '_blank'); printWindow.document.write(printContent); printWindow.document.close(); setTimeout(() => { try { printWindow.focus(); printWindow.print(); printWindow.close(); } catch (e) { showToast('❌ प्रिंट पॉप-अप ब्लॉक हो गया', 'error'); } }, 500); }
@@ -848,6 +1002,7 @@
                 p.name.toLowerCase().includes(lowerCaseQuery) ||
                 (hinglishQuery && p.name.includes(hinglishQuery)) ||
                 (p.barcode && p.barcode.toLowerCase().includes(lowerCaseQuery)) ||
+                (p.manualId && p.manualId.toLowerCase().includes(lowerCaseQuery)) ||
                 p.id.toString().includes(lowerCaseQuery)
             ).slice(0, 5);
             if (results.length === 0) {
@@ -923,7 +1078,18 @@
         function saveNotes() { notes = document.getElementById('notesText').value; localStorage.setItem('notes', notes); if(history.state.modal === 'notes') history.back(); else closeNotesModal(); showToast('📝 नोट्स सेव हो गए!', 'success'); }
         function showNotesModal() { toggleBodyScroll(true); toggleMenu(); document.getElementById('notesText').value = notes; document.getElementById('notesModal').classList.remove('hidden'); history.pushState({ modal: 'notes' }, '', location.href); }
         function handleBackButton(event) { if (isScanning) { stopScanning(currentScanningSection); return; } const openModal = document.querySelector('.fixed.inset-0.z-50:not(.hidden)'); if (openModal) { if(openModal.id === 'menuDropdown'){ toggleMenu(); return; } switch (openModal.id) { case 'addProductModal': closeAddModal(); break; case 'editModal': closeEditModal(); break; case 'notesModal': closeNotesModal(); break; default: openModal.classList.add('hidden'); toggleBodyScroll(false); break; } return; } if (event.state && event.state.section) { showSection(event.state.section, false); } else { showSection('home', false); } }
-        function fetchProductDetails(barcode) { if (!barcode.trim()) return; let product = null; if (productDatabase[barcode]) { product = productDatabase[barcode]; showToast('✅ प्रोडक्ट डिटेल्स ऑटो-फिल हो गए!', 'success'); } else if (products[barcode] || Object.values(products).find(p => p.barcode === barcode)) { product = products[barcode] || Object.values(products).find(p => p.barcode === barcode); showToast('📦 स्टोर से प्रोडक्ट डिटेल्स लोड हो गए!', 'info'); } if (product) { document.getElementById('productName').value = product.name; document.getElementById('productPrice').value = product.price; document.getElementById('productDetails').value = product.details || ''; document.getElementById('productFillingQuantity').value = product.fillingQuantity || 1; document.getElementById('productUnit').value = product.unit || 'piece'; } }
+        function fetchProductDetails(barcode) { 
+            if (!barcode.trim()) return; 
+            let product = Object.values(products).find(p => p.barcode === barcode || p.manualId === barcode) || productDatabase[barcode];
+            if (product) { 
+                showToast('📦 प्रोडक्ट डिटेल्स मिल गए!', 'success');
+                document.getElementById('productName').value = product.name; 
+                document.getElementById('productPrice').value = product.price; 
+                document.getElementById('productDetails').value = product.details || ''; 
+                document.getElementById('productFillingQuantity').value = product.fillingQuantity || 1; 
+                document.getElementById('productUnit').value = product.unit || 'piece'; 
+            }
+        }
         function toggleLanguage() { currentLanguage = currentLanguage === 'hi' ? 'en' : 'hi'; setLanguage(currentLanguage); }
          function setLanguage(lang) { currentLanguage = lang; localStorage.setItem('language', lang); document.documentElement.lang = lang; const langStrings = translations[lang]; document.querySelectorAll('[data-lang-key]').forEach(el => { const key = el.dataset.langKey; if (langStrings[key]) { if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { if (el.placeholder) { el.placeholder = langStrings[key]; } } else { const targetElement = el.querySelector('span[data-lang-key]') || el; const textNode = Array.from(targetElement.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0); if (textNode) { textNode.textContent = langStrings[key]; } else { targetElement.textContent = langStrings[key]; } } } }); }
         
