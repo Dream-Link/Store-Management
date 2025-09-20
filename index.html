@@ -31,10 +31,10 @@
             --bg-start: #F2F2F7;
             --bg-end: #FFFFFF;
             --card: #FFFFFF;
-            --text: #000000;
+            --text: #1F2937; /* Softer black */
             --text-light: #6B7280;
             --border-color: #E5E5EA;
-            --text-heading: #000000;
+            --text-heading: #111827;
             --text-product-name: #1F2937;
             --text-price: var(--primary);
             --text-meta: #8A8A8E;
@@ -48,7 +48,7 @@
             --bg-start: #000000;
             --bg-end: #1C1C1E;
             --card: #1C1C1E;
-            --text: #FFFFFF;
+            --text: #E5E5EA; /* Softer white */
             --text-light: #8D8D93;
             --border-color: #38383A;
             --text-heading: #FFFFFF;
@@ -69,17 +69,29 @@
         .price-text { color: var(--text-price); }
         .meta-text { color: var(--text-meta); }
         
-        .modern-card { background: var(--card); border: 1px solid var(--border-color); border-radius: 0.75rem; transition: border-color 0.2s ease-in-out; }
-        .modern-card:hover { border-color: color-mix(in srgb, var(--primary) 40%, transparent); }
+        .modern-card { 
+            background: var(--card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 0.75rem; 
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+        }
+        html.dark .modern-card {
+             box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.1);
+        }
+        .modern-card:hover { 
+            border-color: color-mix(in srgb, var(--primary) 40%, transparent); 
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+        }
         .modern-input { border: 1px solid var(--border-color); border-radius: 0.5rem; transition: all 0.2s ease; background-color: var(--input-bg); color: var(--text); }
         .modern-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent); outline: none; background-color: var(--card); }
         .modern-input.error { border-color: #EF4444; animation: shake 0.5s; }
         label { color: var(--text-light); }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
         
-        .modern-btn { border-radius: 0.5rem; font-weight: 600; transition: opacity 0.2s ease; border: 1px solid transparent; }
-        .modern-btn:hover { opacity: 0.85; }
-        .modern-btn:active { opacity: 0.7; }
+        .modern-btn { border-radius: 0.5rem; font-weight: 600; transition: opacity 0.2s ease, transform 0.2s ease; border: 1px solid transparent; }
+        .modern-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .modern-btn:active { opacity: 0.7; transform: translateY(0px); }
 
         .barcode-badge { background-color: color-mix(in srgb, var(--text) 5%, transparent); color: var(--text-light); font-family: monospace; font-size: 0.65rem; padding: 2px 6px; border-radius: 9999px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
@@ -101,11 +113,50 @@
         @media (min-width: 768px) {
              body { display: flex; }
              .sidebar { width: 220px; flex-shrink: 0; }
-             main { flex-grow: 1; background-color: var(--bg-start); }
+             main { 
+                 flex-grow: 1; 
+                 background-color: var(--bg-start);
+                 max-width: 1280px; /* Added max-width for better readability on large screens */
+                 margin-left: auto;
+                 margin-right: auto;
+             }
              .section-container { max-width: 100%; margin: 0; }
         }
+
         /* Print Styles */
-        @media print { .no-print { display: none !important; } body { background-color: white !important; } }
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                background-color: #ffffff !important; 
+                color: #000000 !important;
+                font-size: 10pt;
+            }
+            main, .section-container, .md\:pl-\[220px\] {
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            .modern-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                border-radius: 0 !important;
+            }
+            .price-text, .primary-text {
+                color: #000000 !important;
+            }
+            .product-name-text {
+                 color: #000000 !important;
+            }
+            h1, h2, h3, h4, th {
+                color: #000000 !important;
+            }
+            a::after {
+                content: "" !important;
+            }
+            @page {
+                margin: 0.75in;
+                size: A4;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen pb-16 md:pb-0">
@@ -126,14 +177,14 @@
     </aside>
 
     <div class="md:pl-[220px] w-full">
-        <header class="card-bg sticky top-0 z-30 border-b md-hidden no-print" style="border-color: var(--border-color);">
+        <header class="card-bg sticky top-0 z-30 border-b md:hidden no-print" style="border-color: var(--border-color);">
             <div class="px-3">
                 <div class="flex items-center justify-between h-12">
                     <div class="flex items-center">
                         <svg class="h-6 w-6 primary-text" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5A2.25 2.25 0 0 0 11.25 11.25H4.5A2.25 2.25 0 0 0 2.25 13.5V21M3 3h12M3 7.5h12M3 12h12M3 16.5h12M17.25 3v18" /></svg>
                         <h1 id="mobileStoreName" class="ml-2 text-md font-bold primary-text">मेरा स्टोर</h1>
                     </div>
-                    <button onclick="toggleMenu()" class="p-2 rounded-full hover:bg-gray-100 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
+                    <button onclick="toggleMenu()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
                 </div>
             </div>
         </header>
@@ -141,21 +192,21 @@
         <div id="menuDropdown" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-end no-print" onclick="if(event.target === this) toggleMenu()">
             <div id="menuContent" class="card-bg w-full rounded-t-2xl shadow-xl slide-up">
                 <div class="p-2 space-y-1">
-                    <div class="w-10 h-1.5 bg-gray-300 rounded-full mx-auto mb-2"></div>
-                    <button onclick="handleEditStoreName()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg><span data-lang-key="menu_rename_store">स्टोर का नाम बदलें</span></button>
-                    <button onclick="toggleTheme()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg><span>थीम बदलें (लाइट/डार्क)</span></button>
-                    <button onclick="toggleLanguage()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 13l4-4M19 5h-4M16 19l-4-4M5 19h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span data-lang-key="menu_change_language">भाषा बदलें / Language</span></button>
-                    <button onclick="showNotesModal()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg><span data-lang-key="menu_notes">नोट्स</span></button>
-                    <hr class="my-1" style="border-color: var(--border-color);"><button onclick="exportData()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg><span data-lang-key="menu_export">डेटा एक्सपोर्ट करें</span></button>
-                    <button onclick="document.getElementById('importFile').click()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg><span data-lang-key="menu_import">डेटा इम्पोर्ट करें</span></button>
-                    <hr class="my-1" style="border-color: var(--border-color);"><button onclick="printAllProducts()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg><span data-lang-key="menu_print_products">सभी प्रोडक्ट्स प्रिंट करें</span></button>
+                    <div class="w-10 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-2"></div>
+                    <button onclick="handleEditStoreName()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg><span data-lang-key="menu_rename_store">स्टोर का नाम बदलें</span></button>
+                    <button onclick="toggleTheme()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg><span>थीम बदलें (लाइट/डार्क)</span></button>
+                    <button onclick="toggleLanguage()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 13l4-4M19 5h-4M16 19l-4-4M5 19h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span data-lang-key="menu_change_language">भाषा बदलें / Language</span></button>
+                    <button onclick="showNotesModal()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg><span data-lang-key="menu_notes">नोट्स</span></button>
+                    <hr class="my-1" style="border-color: var(--border-color);"><button onclick="exportData()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg><span data-lang-key="menu_export">डेटा एक्सपोर्ट करें</span></button>
+                    <button onclick="document.getElementById('importFile').click()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg><span data-lang-key="menu_import">डेटा इम्पोर्ट करें</span></button>
+                    <hr class="my-1" style="border-color: var(--border-color);"><button onclick="printAllProducts()" class="w-full text-left px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center space-x-3 text-sm"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg><span data-lang-key="menu_print_products">सभी प्रोडक्ट्स प्रिंट करें</span></button>
                 </div>
             </div>
         </div>
         
         <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
 
-        <main class="no-print">
+        <main>
             <div id="homeSection" class="fade-in section-container p-3 md:p-4">
                 <div id="dashboardHeader" class="flex items-center justify-between cursor-pointer mb-3">
                     <h2 data-lang-key="dashboard_title" class="text-xl font-bold">डैशबोर्ड</h2>
@@ -716,15 +767,19 @@
         function displayProducts(productsToDisplay) {
             const list = document.getElementById('productsList');
             list.innerHTML = '';
+            list.style.gridTemplateColumns = ''; // Reset grid style
             const productArray = productsToDisplay || Object.values(products);
             document.getElementById('view-switcher').querySelector(`button[onclick="changeStoreView('${storeView}')"]`).classList.add('active');
+
             if (storeView === 'grid') {
-                list.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3';
+                list.className = 'grid gap-3';
+                list.style.gridTemplateColumns = 'repeat(auto-fit, minmax(170px, 1fr))'; // IMPROVED: Responsive grid
             } else {
                 list.className = 'space-y-2';
             }
             if (productArray.length === 0) {
                 list.className = '';
+                list.style.gridTemplateColumns = '';
                 list.innerHTML = `<div class="text-center text-gray-500 col-span-full py-16 flex flex-col items-center"><svg class="w-16 h-16 text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg><h3 class="font-bold text-md" data-lang-key="empty_state_no_products_title">अभी कोई प्रोडक्ट नहीं है</h3><p class="mb-4 text-sm" data-lang-key="empty_state_no_products_desc">नीचे दिए गए बटन से अपना पहला प्रोडक्ट जोड़ें।</p><button onclick="showAddModal()" class="primary-bg text-white py-2 px-5 rounded-lg font-semibold modern-btn text-sm flex items-center justify-center space-x-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg><span data-lang-key="empty_state_add_product_btn">नया प्रोडक्ट जोड़ें</span></button></div>`;
             } else {
                 productArray.forEach(p => {
@@ -958,6 +1013,14 @@
                 printWindow.document.write(billHtml);
                 printWindow.document.close();
                 printWindow.focus();
+                // Add a slight delay for the content to render before printing
+                setTimeout(() => {
+                    try {
+                        printWindow.print();
+                    } catch (e) {
+                        showToast('❌ प्रिंट पॉप-अप ब्लॉक हो गया', 'error');
+                    }
+                }, 250);
             } else {
                 showToast('❌ कृपया पॉप-अप को अनुमति दें', 'error');
             }
@@ -965,6 +1028,7 @@
         
         function generateModernBillHTML(bill) { 
             const s = getComputedStyle(document.body); 
+            // Using fixed colors for print consistency instead of CSS variables
             const theme = { primary: '#007AFF', secondary: '#34C759', bg_end: '#F9FAFB', card: '#FFFFFF', text: '#111827', text_light: '#6B7280', border: '#E5E7EB' }; 
             let itemsHtml = ''; 
             bill.items.forEach((item, index) => { 
@@ -980,11 +1044,11 @@
                 const statusColor = bill.paymentType === 'credit' ? '#EF4444' : '#22C55E'; 
                 paymentStatusHtml = `<div style="text-align: right;"><p style="font-size: 0.8rem; color:${theme.text_light}; font-weight: 600;">STATUS</p><p style="font-weight: 700; font-size: 1.1rem; color:${statusColor};">${statusText}</p></div>`; 
             } 
-            return `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>Bill - ${bill.id}</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');body{font-family:'Inter',sans-serif;background-color:#f3f4f6;color:${theme.text};}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}</style></head><body style="padding: 1rem;"><div style="max-width: 42rem; margin: auto; background-color:${theme.card}; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 2rem; border: 1px solid ${theme.border};"><div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid ${theme.border};"><div style="text-align: left;"><h1 style="font-size: 1.5rem; font-weight: 700; color:${theme.primary};">${storeName}</h1><p style="color:${theme.text_light};">INVOICE</p></div><div style="text-align: right;"><p style="font-weight: 600;">बिल #${bill.id}</p><p style="font-size: 0.875rem; color:${theme.text_light};">${new Date(bill.date).toLocaleString('hi-IN')}</p></div></div><div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;"><div style="text-align: left;"><p style="font-size: 0.8rem; color:${theme.text_light};">BILL TO</p><p style="font-weight: 600;">${bill.customerName || 'N/A'}</p></div>${paymentStatusHtml}</div><div style="width: 100%; overflow-x: auto;"><table style="width: 100%; font-size: 0.875rem; border-collapse: collapse;"><thead><tr style="background-color: ${theme.bg_end};"><th style="padding: 8px 12px; text-align: left; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">प्रोडक्ट</th><th style="padding: 8px 12px; text-align: center; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">मात्रा</th><th style="padding: 8px 12px; text-align: right; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">कुल</th></tr></thead><tbody>${itemsHtml}</tbody></table></div><div style="display: flex; justify-content: flex-end; padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid ${theme.border};"><div style="width: 100%; max-width: 16rem; text-align: right;"><div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;"><span style="color:${theme.text_light};">Subtotal</span><span>₹${bill.total.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.125rem; color:${theme.secondary};"><span style="font-weight: 700;">कुल राशि</span><span>₹${bill.total.toFixed(2)}</span></div></div></div><div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid ${theme.border};"><p style="font-size: 0.75rem; color:${theme.text_light};">Thank you for your visit!</p></div></div></body></html>`; 
+            return `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>Bill - ${bill.id}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');body{font-family:'Inter',sans-serif;background-color:#f3f4f6;color:${theme.text};}@media print{body{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}}</style></head><body style="padding: 1rem;"><div style="max-width: 42rem; margin: auto; background-color:${theme.card}; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 2rem; border: 1px solid ${theme.border};"><div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid ${theme.border};"><div style="text-align: left;"><h1 style="font-size: 1.5rem; font-weight: 700; color:${theme.primary};">${storeName}</h1><p style="color:${theme.text_light};">INVOICE</p></div><div style="text-align: right;"><p style="font-weight: 600;">बिल #${bill.id}</p><p style="font-size: 0.875rem; color:${theme.text_light};">${new Date(bill.date).toLocaleString('hi-IN')}</p></div></div><div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;"><div style="text-align: left;"><p style="font-size: 0.8rem; color:${theme.text_light};">BILL TO</p><p style="font-weight: 600;">${bill.customerName || 'N/A'}</p></div>${paymentStatusHtml}</div><div style="width: 100%; overflow-x: auto;"><table style="width: 100%; font-size: 0.875rem; border-collapse: collapse;"><thead><tr style="background-color: ${theme.bg_end};"><th style="padding: 8px 12px; text-align: left; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">प्रोडक्ट</th><th style="padding: 8px 12px; text-align: center; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">मात्रा</th><th style="padding: 8px 12px; text-align: right; font-weight: 600; color:${theme.primary}; border-bottom: 2px solid ${theme.primary};">कुल</th></tr></thead><tbody>${itemsHtml}</tbody></table></div><div style="display: flex; justify-content: flex-end; padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid ${theme.border};"><div style="width: 100%; max-width: 16rem; text-align: right;"><div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;"><span style="color:${theme.text_light};">Subtotal</span><span>₹${bill.total.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.125rem; color:${theme.secondary};"><span style="font-weight: 700;">कुल राशि</span><span>₹${bill.total.toFixed(2)}</span></div></div></div><div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid ${theme.border};"><p style="font-size: 0.75rem; color:${theme.text_light};">Thank you for your visit!</p></div></div></body></html>`; 
         }
         
-        function printOldBill(event, billId) { event.stopPropagation(); const bill = billHistory.find(b => b.id.toString() === billId.toString()); if (!bill) return; const billHtml = generateModernBillHTML(bill); const printWindow = window.open('', '_blank'); if (printWindow) { printWindow.document.write(billHtml); printWindow.document.close(); printWindow.focus(); } else { showToast('❌ कृपया पॉप-अप को अनुमति दें', 'error'); } }
-        function printAllProducts() { toggleMenu(); if (Object.keys(products).length === 0) { showToast('❌ प्रिंट करने के लिए कोई प्रोडक्ट नहीं है!', 'error'); return; } const computedStyle = getComputedStyle(document.body); const themeStyle = `:root { --primary: ${computedStyle.getPropertyValue('--primary')}; --secondary: ${computedStyle.getPropertyValue('--secondary')}; --card: ${computedStyle.getPropertyValue('--card')}; --text: ${computedStyle.getPropertyValue('--text')}; --text-light: ${computedStyle.getPropertyValue('--text-light')}; --bg-start: ${computedStyle.getPropertyValue('--bg-start')}; }`; const productsHtml = Object.values(products).map((p, index) => `<tr class="border-b"><td class="p-3">${index + 1}</td><td class="p-3 font-semibold">${p.name || ''}</td><td class="p-3">₹${p.price ? p.price.toFixed(2) : '0.00'} / ${p.fillingQuantity || 1} ${unitTextMap[p.unit] || p.unit}</td><td class="p-3 font-mono text-xs">${p.barcode || 'N/A'}</td><td class="p-3 text-xs">${p.details || ''}</td></tr>`).join(''); const printContent = `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>${storeName} - सभी प्रोडक्ट्स</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body { font-family: 'Inter', sans-serif; background-color: var(--bg-start); color: var(--text); } ${themeStyle} @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }</style></head><body><div class="container mx-auto p-8"><div class="text-center mb-8 p-4 rounded-lg" style="background-color: var(--card);"><h1 class="text-3xl font-bold" style="color: var(--primary);">${storeName}</h1><p style="color: var(--text-light);">सभी प्रोडक्ट्स की सूची</p><p class="text-xs mt-1" style="color: var(--text-light);">${new Date().toLocaleString('hi-IN')}</p></div><div class="rounded-lg shadow-md overflow-hidden" style="background-color: var(--card);"><table class="w-full text-sm"><thead style="background-color: var(--primary); color: white;"><tr><th class="p-3 text-left">#</th><th class="p-3 text-left">नाम</th><th class="p-3 text-left">कीमत/यूनिट</th><th class="p-3 text-left">बारकोड</th><th class="p-3 text-left">विवरण</th></tr></thead><tbody>${productsHtml}</tbody></table></div><div class="text-center mt-6 text-sm" style="color: var(--text-light);">कुल प्रोडक्ट्स: ${Object.keys(products).length}</div></div></body></html>`; const printWindow = window.open('', '_blank'); printWindow.document.write(printContent); printWindow.document.close(); setTimeout(() => { try { printWindow.focus(); printWindow.print(); printWindow.close(); } catch (e) { showToast('❌ प्रिंट पॉप-अप ब्लॉक हो गया', 'error'); } }, 500); }
+        function printOldBill(event, billId) { event.stopPropagation(); const bill = billHistory.find(b => b.id.toString() === billId.toString()); if (!bill) return; const billHtml = generateModernBillHTML(bill); const printWindow = window.open('', '_blank'); if (printWindow) { printWindow.document.write(billHtml); printWindow.document.close(); printWindow.focus(); setTimeout(() => { try { printWindow.print(); } catch (e) { showToast('❌ प्रिंट पॉप-अप ब्लॉक हो गया', 'error'); } }, 250); } else { showToast('❌ कृपया पॉप-अप को अनुमति दें', 'error'); } }
+        function printAllProducts() { toggleMenu(); if (Object.keys(products).length === 0) { showToast('❌ प्रिंट करने के लिए कोई प्रोडक्ट नहीं है!', 'error'); return; } const computedStyle = getComputedStyle(document.body); const themeStyle = `:root { --primary: ${computedStyle.getPropertyValue('--primary')}; --secondary: ${computedStyle.getPropertyValue('--secondary')}; --card: ${computedStyle.getPropertyValue('--card')}; --text: ${computedStyle.getPropertyValue('--text')}; --text-light: ${computedStyle.getPropertyValue('--text-light')}; --bg-start: ${computedStyle.getPropertyValue('--bg-start')}; }`; const productsHtml = Object.values(products).map((p, index) => `<tr class="border-b"><td class="p-3">${index + 1}</td><td class="p-3 font-semibold">${p.name || ''}</td><td class="p-3">₹${p.price ? p.price.toFixed(2) : '0.00'} / ${p.fillingQuantity || 1} ${unitTextMap[p.unit] || p.unit}</td><td class="p-3 font-mono text-xs">${p.barcode || 'N/A'}</td><td class="p-3 text-xs">${p.details || ''}</td></tr>`).join(''); const printContent = `<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>${storeName} - सभी प्रोडक्ट्स</title><script src="https://cdn.tailwindcss.com"><\/script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); body { font-family: 'Inter', sans-serif; background-color: white !important; color: black !important; } @media print { body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }</style></head><body><div class="container mx-auto p-8"><div class="text-center mb-8 p-4 rounded-lg"><h1 class="text-3xl font-bold text-blue-600">${storeName}</h1><p class="text-gray-500">सभी प्रोडक्ट्स की सूची</p><p class="text-xs mt-1 text-gray-500">${new Date().toLocaleString('hi-IN')}</p></div><div class="rounded-lg shadow-md overflow-hidden border"><table class="w-full text-sm"><thead class="bg-gray-100"><tr><th class="p-3 text-left">#</th><th class="p-3 text-left">नाम</th><th class="p-3 text-left">कीमत/यूनिट</th><th class="p-3 text-left">बारकोड</th><th class="p-3 text-left">विवरण</th></tr></thead><tbody>${productsHtml}</tbody></table></div><div class="text-center mt-6 text-sm text-gray-500">कुल प्रोडक्ट्स: ${Object.keys(products).length}</div></div></body></html>`; const printWindow = window.open('', '_blank'); printWindow.document.write(printContent); printWindow.document.close(); setTimeout(() => { try { printWindow.focus(); printWindow.print(); printWindow.close(); } catch (e) { showToast('❌ प्रिंट पॉप-अप ब्लॉक हो गया', 'error'); } }, 500); }
 
         function handleEditStoreName() { toggleMenu(); showPromptModal('स्टोर का नाम बदलें', 'कृपया अपने स्टोर का नया नाम दर्ज करें।', storeName, (newName) => { if (newName && newName.trim()) { storeName = newName.trim(); document.getElementById('storeName').textContent = storeName; document.getElementById('mobileStoreName').textContent = storeName; localStorage.setItem('storeName', storeName); showToast('✅ स्टोर का नाम अपडेट हो गया!', 'success'); } }); }
         function closeEditModal() { toggleBodyScroll(false); document.getElementById('editModal').classList.add('hidden'); currentEditingProduct = null; }
